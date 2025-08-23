@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Watchdog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DbData>
+    <Provider>
+      <Name>MSDAORA.1</Name>
+    </Provider>
+    <DataSource>vac1db</DataSource>
+    <User>vac</User>
+    <Password>
+      <EncryptedPassword>QTIuzl1XS02efFAAjUXhlA==</EncryptedPassword>
+    </Password>
+    <StationNo>1</StationNo>
+    <TableName>watchdogs</TableName>
+    <WatchdogFieldName>counter</WatchdogFieldName>
+    <WatchdogParamName>VODSPV</WatchdogParamName>
+    <WatchdogParamFieldName>process_id</WatchdogParamFieldName>
+    <LastWatchdogDateFieldName>time_stamp</LastWatchdogDateFieldName>
+  </DbData>
+  <Condition>
+    <TimeAfterLastChangeValue>60</TimeAfterLastChangeValue>
+  </Condition>
+  <Name>VAC1SPV</Name>
+  <DoRequest>true</DoRequest>
+</Watchdog>

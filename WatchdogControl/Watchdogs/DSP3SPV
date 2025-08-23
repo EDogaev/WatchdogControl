@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Watchdog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DbData>
+    <Provider>
+      <Name>MSDAORA.1</Name>
+    </Provider>
+    <DataSource>dsp3db</DataSource>
+    <User>tehnol</User>
+    <Password>
+      <EncryptedPassword>/1w+MYzaEnS9mJucIQkfUw==</EncryptedPassword>
+    </Password>
+    <StationNo>3</StationNo>
+    <TableName>watchdogs</TableName>
+    <WatchdogFieldName>counter</WatchdogFieldName>
+    <WatchdogParamName>EAFSPV</WatchdogParamName>
+    <WatchdogParamFieldName>process_id</WatchdogParamFieldName>
+    <LastWatchdogDateFieldName>time_stamp</LastWatchdogDateFieldName>
+  </DbData>
+  <Condition>
+    <TimeAfterLastChangeValue>60</TimeAfterLastChangeValue>
+  </Condition>
+  <Name>DSP3SPV</Name>
+  <DoRequest>true</DoRequest>
+</Watchdog>

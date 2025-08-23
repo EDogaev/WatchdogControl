@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Watchdog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DbData>
+    <Provider>
+      <Name>MSDAORA.1</Name>
+      <Description>Microsoft OLE DB Provider for Oracle</Description>
+    </Provider>
+    <DataSource>pzo1db</DataSource>
+    <User>admin</User>
+    <Password>
+      <EncryptedPassword>8N/mopyrwLuTMpBnhAqokg==</EncryptedPassword>
+    </Password>
+    <StationNo>1</StationNo>
+    <TableName>watchdogs</TableName>
+    <WatchdogFieldName>counter</WatchdogFieldName>
+    <WatchdogParamName>PZOSPV</WatchdogParamName>
+    <WatchdogParamFieldName>process_id</WatchdogParamFieldName>
+    <LastWatchdogDateFieldName>time_stamp</LastWatchdogDateFieldName>
+  </DbData>
+  <Condition>
+    <TimeAfterLastChangeValue>60</TimeAfterLastChangeValue>
+  </Condition>
+  <Name>PZO1SPV</Name>
+  <DoRequest>true</DoRequest>
+</Watchdog>

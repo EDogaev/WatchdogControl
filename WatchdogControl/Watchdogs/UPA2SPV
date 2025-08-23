@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Watchdog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DbData>
+    <Provider>
+      <Name>MSDAORA.1</Name>
+    </Provider>
+    <DataSource>upa2db</DataSource>
+    <User>upa</User>
+    <Password>
+      <EncryptedPassword>kZ1JKMavvNDOW7s1oKn8Nw==</EncryptedPassword>
+    </Password>
+    <StationNo>2</StationNo>
+    <TableName>watchdogs</TableName>
+    <WatchdogFieldName>counter</WatchdogFieldName>
+    <WatchdogParamName>UPASPV</WatchdogParamName>
+    <WatchdogParamFieldName>process_id</WatchdogParamFieldName>
+    <LastWatchdogDateFieldName>time_stamp</LastWatchdogDateFieldName>
+  </DbData>
+  <Condition>
+    <TimeAfterLastChangeValue>60</TimeAfterLastChangeValue>
+  </Condition>
+  <DoRequest>true</DoRequest>
+  <Name>UPA2SPV</Name>
+</Watchdog>

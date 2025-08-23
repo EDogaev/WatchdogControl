@@ -1,76 +1,148 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>Counter.ico</ApplicationIcon>
+	<OutputType>WinExe</OutputType>
+	<TargetFramework>net9.0-windows</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<UseWPF>true</UseWPF>
+	<ApplicationIcon>Counter.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Add.png" />
-    <None Remove="Images\Connected.png" />
-    <None Remove="Images\Disconnected.png" />
-    <None Remove="Images\Edit.png" />
-    <None Remove="Images\Error.png" />
-    <None Remove="Images\GrayCircle.png" />
-    <None Remove="Images\GreenCircle.png" />
-    <None Remove="Images\Pause.png" />
-    <None Remove="Images\Play.png" />
-    <None Remove="Images\RedCircle.png" />
-    <None Remove="Images\Refresh.png" />
-    <None Remove="Images\Remove.png" />
-    <None Remove="Images\UnknownConnectionState.png" />
-    <None Remove="Images\Warning.png" />
-    <None Remove="Images\YellowCircle.png" />
+	<None Remove="Images\Add.png" />
+	<None Remove="Images\Connected.png" />
+	<None Remove="Images\Disconnected.png" />
+	<None Remove="Images\Edit.png" />
+	<None Remove="Images\Error.png" />
+	<None Remove="Images\GrayCircle.png" />
+	<None Remove="Images\GreenCircle.png" />
+	<None Remove="Images\Pause.png" />
+	<None Remove="Images\Play.png" />
+	<None Remove="Images\RedCircle.png" />
+	<None Remove="Images\Refresh.png" />
+	<None Remove="Images\Remove.png" />
+	<None Remove="Images\UnknownConnectionState.png" />
+	<None Remove="Images\Warning.png" />
+	<None Remove="Images\YellowCircle.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Counter.ico" />
+	<Content Include="Counter.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.9.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
-    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.1" />
+	<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.8" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+	<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.9.1" />
+	<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
+	<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+	<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Utilities">
-      <HintPath>Lib\Utilities.dll</HintPath>
-    </Reference>
+	<Reference Include="Utilities">
+	  <HintPath>Lib\Utilities.dll</HintPath>
+	</Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Add.png" />
-    <Resource Include="Images\Connected.png" />
-    <Resource Include="Images\Disconnected.png" />
-    <Resource Include="Images\Edit.png" />
-    <Resource Include="Images\Error.png" />
-    <Resource Include="Images\GrayCircle.png" />
-    <Resource Include="Images\GreenCircle.png" />
-    <Resource Include="Images\Pause.png" />
-    <Resource Include="Images\Play.png" />
-    <Resource Include="Images\RedCircle.png" />
-    <Resource Include="Images\Refresh.png" />
-    <Resource Include="Images\Remove.png" />
-    <Resource Include="Images\UnknownConnectionState.png" />
-    <Resource Include="Images\Warning.png" />
-    <Resource Include="Images\YellowCircle.png" />
+	<Resource Include="Images\Add.png" />
+	<Resource Include="Images\Connected.png" />
+	<Resource Include="Images\Disconnected.png" />
+	<Resource Include="Images\Edit.png" />
+	<Resource Include="Images\Error.png" />
+	<Resource Include="Images\GrayCircle.png" />
+	<Resource Include="Images\GreenCircle.png" />
+	<Resource Include="Images\Pause.png" />
+	<Resource Include="Images\Play.png" />
+	<Resource Include="Images\RedCircle.png" />
+	<Resource Include="Images\Refresh.png" />
+	<Resource Include="Images\Remove.png" />
+	<Resource Include="Images\UnknownConnectionState.png" />
+	<Resource Include="Images\Warning.png" />
+	<Resource Include="Images\YellowCircle.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="tnsnames.ora">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Watchdogs.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+	<None Update="tnsnames.ora">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs.db">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\AKOS31SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\AKOS32SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM1COM">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM1SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM2COM">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM2SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM3COM">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM3SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM4COM">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\CCM4SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\DSP1SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\DSP2SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\DSP3SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\DSP4SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\PZO1SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\PZO2SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\PZO3SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\PZO4SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\RMHSPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\UPA1SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\UPA2SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\VAC1SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\VAC2SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Watchdogs\VAC3SPV">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
 
 </Project>

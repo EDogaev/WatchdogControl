@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Watchdog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DbData>
+    <Provider>
+      <Name>MSDAORA.1</Name>
+    </Provider>
+    <DataSource>ccm2db</DataSource>
+    <User>admin</User>
+    <Password>
+      <EncryptedPassword>YTFjzsCI5Mq8azDUVH365Q==</EncryptedPassword>
+    </Password>
+    <StationNo>2</StationNo>
+    <TableName>watchdogs</TableName>
+    <WatchdogFieldName>counter</WatchdogFieldName>
+    <WatchdogParamName>CCMSPV</WatchdogParamName>
+    <WatchdogParamFieldName>process_id</WatchdogParamFieldName>
+    <LastWatchdogDateFieldName>time_stamp</LastWatchdogDateFieldName>
+  </DbData>
+  <Condition>
+    <TimeAfterLastChangeValue>60</TimeAfterLastChangeValue>
+  </Condition>
+  <Name>CCM2SPV</Name>
+  <DoRequest>true</DoRequest>
+</Watchdog>
