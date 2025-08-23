@@ -65,6 +65,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="tnsnames.ora">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Watchdogs.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
