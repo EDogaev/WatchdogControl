@@ -70,9 +70,9 @@
         <Label Grid.Row="1" Grid.Column="0" Content="База данных:" Template="{StaticResource RequiredFieldTemplate}" />
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Watchdog.DbData.DataSource}" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Провайдер:" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Провайдер:" Visibility="Collapsed"/>
         <ComboBox Grid.Row="2" Grid.Column="1" IsEditable="False" Margin="2" ItemsSource="{Binding Providers}"
-                DisplayMemberPath="Name" SelectedItem="{Binding Watchdog.DbData.Provider}" />
+                DisplayMemberPath="Name" SelectedItem="{Binding Watchdog.DbData.Provider}" Visibility="Collapsed" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Пользователь:" Template="{StaticResource RequiredFieldTemplate}" />
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Watchdog.DbData.User}" />
