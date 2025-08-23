@@ -32,14 +32,14 @@ namespace WatchdogControl.RealizedInterfaces
             remove => CommandManager.RequerySuggested -= value;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return !_isRunning && (_canExecute?.Invoke(parameter == null ? default : (T)parameter) ?? true);
+            return !_isRunning && (_canExecute?.Invoke(parameter == null ? default! : (T)parameter) ?? true);
         }
 
-        public async void Execute(object parameter)
+        public async void Execute(object? parameter)
         {
-            await ExecuteAsync(parameter == null ? default : (T)parameter);
+            await ExecuteAsync(parameter == null ? default! : (T)parameter);
         }
 
         private async Task ExecuteAsync(T parameter)

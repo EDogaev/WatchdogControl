@@ -9,7 +9,7 @@ namespace WatchdogControl.Services
 {
     internal static class WatchdogService
     {
-        public static IWatchdogManager WatchdogManager { get; set; }
+        public static IWatchdogManager? WatchdogManager { get; set; }
 
         /// <summary>Проверка введенных данных таблицы</summary>
         public static async Task<bool> TestWatchDogDbData(Watchdog watchdog)

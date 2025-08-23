@@ -255,7 +255,7 @@ namespace WatchdogControl.ViewModels
 
             var newWatchdog = _watchdogFactory.CreateWatchdog();
 
-            if (!CreateEditWatchdogWindow(EditType.Add, newWatchdog))
+            if (!CreateEditWatchdogWindow(newWatchdog))
                 return;
 
             Watchdogs.Add(newWatchdog);
@@ -279,7 +279,7 @@ namespace WatchdogControl.ViewModels
             // (если изменится наименование Watchdog, то удалить файл по этому пути)
             editedWatchdog.FilePath = SelectedWatchdog.FilePath;
 
-            if (!CreateEditWatchdogWindow(EditType.Edit, editedWatchdog))
+            if (!CreateEditWatchdogWindow(editedWatchdog))
                 return;
 
             _logger.LogWarning($"[{editedWatchdog.Name}] изменен!");
@@ -317,12 +317,11 @@ namespace WatchdogControl.ViewModels
         }
 
         /// <summary> Окно добавления/редактирования Watchdog </summary>
-        /// <param name="editType"></param>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        private static bool CreateEditWatchdogWindow(EditType editType, Watchdog watchdog)
+        private static bool CreateEditWatchdogWindow(Watchdog watchdog)
         {
-            var editWatchdogWindow = new EditWatchdogView(editType, watchdog)
+            var editWatchdogWindow = new EditWatchdogView(watchdog)
             {
                 Owner = Application.Current.MainWindow
             };

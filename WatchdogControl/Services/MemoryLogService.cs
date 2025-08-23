@@ -7,7 +7,7 @@ namespace WatchdogControl.Services
 {
     public static class MemoryLogService
     {
-        private static IMemoryLogStore _memoryLogStore;
+        private static IMemoryLogStore? _memoryLogStore;
 
         /// <summary>
         /// Коллекция, в которой будут храниться сообщения

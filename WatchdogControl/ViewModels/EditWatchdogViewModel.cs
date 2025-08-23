@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using Utilities;
 using WatchdogControl.Enums;
-using WatchdogControl.Models;
 using WatchdogControl.Models.Watchdog;
 using WatchdogControl.RealizedInterfaces;
 using WatchdogControl.Services;
@@ -10,14 +9,7 @@ namespace WatchdogControl.ViewModels
 {
     public class EditWatchdogViewModel : NotifyPropertyChanged
     {
-        private readonly EditType _editType;
         private bool _testingInProgress;
-
-        /// <summary>Список провайдеров</summary>
-        public static List<Provider> Providers { get; }
-
-        /// <summary>Окно открыто для редактирования</summary>
-        public bool IsEditing => _editType == EditType.Edit;
 
         /// <summary>Идет проверка соединения с БД</summary>
         public bool TestingInProgress
@@ -33,15 +25,14 @@ namespace WatchdogControl.ViewModels
 
         public Watchdog Watchdog { get; }
 
-        public RelayCommandAsync<string> TestWatchdogCommand { get; }
+        public RelayCommandAsync<string>? TestWatchdogCommand { get; }
 
-        public RelayCommand<Window> ConfirmCommand { get; }
+        public RelayCommand<Window>? ConfirmCommand { get; }
 
         public EditWatchdogViewModel() { }
 
-        public EditWatchdogViewModel(EditType editType, Watchdog watchdog)
+        public EditWatchdogViewModel(Watchdog watchdog)
         {
-            _editType = editType;
             Watchdog = watchdog;
 
             // проверка введенных данных
@@ -55,12 +46,7 @@ namespace WatchdogControl.ViewModels
                     Messages.ShowMsg("Успешно!");
             });
 
-            ConfirmCommand = new RelayCommand<Window>(SaveWatchdog, w => CanConfirm());
-        }
-
-        static EditWatchdogViewModel()
-        {
-            Providers = DbService.GetProviders();
+            ConfirmCommand = new RelayCommand<Window>(SaveWatchdog, _ => CanConfirm());
         }
 
         /// <summary>Сохранить Watchdog</summary>

@@ -12,10 +12,10 @@ namespace WatchdogControl.Views
     {
         public EditWatchdogViewModel VM;
 
-        public EditWatchdogView(EditType editType, Watchdog watchdog)
+        public EditWatchdogView(Watchdog watchdog)
         {
             InitializeComponent();
-            VM = new EditWatchdogViewModel(editType, watchdog);
+            VM = new EditWatchdogViewModel(watchdog);
             DataContext = VM;
         }
 

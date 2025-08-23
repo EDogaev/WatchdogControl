@@ -6,7 +6,7 @@ namespace WatchdogControl.Converters
 {
     public class StateConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
 
             var valueType = value?.GetType().Name;
@@ -14,46 +14,30 @@ namespace WatchdogControl.Converters
             if (valueType is null)
                 return null;
 
-            switch (valueType)
+            return valueType switch
             {
-                case nameof(WatchdogState):
-                    switch (value)
-                    {
-                        case WatchdogState.Initialization:
-                        case WatchdogState.Unknown:
-                        case WatchdogState.TurnedOff:
-                            return "/Images/GrayCircle.png";
-                        case WatchdogState.NotWork:
-                            return "/Images/RedCircle.png";
-                        case WatchdogState.TurnedOn:
-                            return "/Images/YellowCircle.png";
-                        case WatchdogState.Work:
-                            return "/Images/GreenCircle.png";
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                case nameof(DbState):
-                    switch (value)
-                    {
-                        case DbState.Connecting:
-                        case DbState.Unknown:
-                            return "/Images/UnknownConnectionState.png";
-                        case DbState.Connected:
-                            return "/Images/Connected.png";
-                        case DbState.Disconnected:
-                            return "/Images/Disconnected.png";
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                nameof(WatchdogState) => value switch
+                {
+                    WatchdogState.Initialization or WatchdogState.Unknown or WatchdogState.TurnedOff =>
+                        "/Images/GrayCircle.png",
+                    WatchdogState.NotWork => "/Images/RedCircle.png",
+                    WatchdogState.TurnedOn => "/Images/YellowCircle.png",
+                    WatchdogState.Work => "/Images/GreenCircle.png",
+                    _ => throw new ArgumentOutOfRangeException()
+                },
+                nameof(DbState) => value switch
+                {
+                    DbState.Connecting or DbState.Unknown => "/Images/UnknownConnectionState.png",
+                    DbState.Connected => "/Images/Connected.png",
+                    DbState.Disconnected => "/Images/Disconnected.png",
+                    _ => throw new ArgumentOutOfRangeException()
+                },
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
