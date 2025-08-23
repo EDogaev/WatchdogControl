@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace WatchdogControl
 {
@@ -49,6 +49,19 @@ namespace WatchdogControl
             _logger.LogInformation("Запуск приложения");
 
             Bootstrapper.RunApp();
+
+            // перехват необработанных ошибок
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                var ex = (Exception)e.ExceptionObject;
+                _logger.LogInformation($"Ошибка: {ex.Message}");
+            };
+
+            TaskScheduler.UnobservedTaskException += (sender, e) =>
+            {
+                _logger.LogInformation($"Ошибка: {e.Exception.Message}");
+            };
+
 
             base.OnStartup(e);
         }
