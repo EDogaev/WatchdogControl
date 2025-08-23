@@ -22,14 +22,14 @@ namespace WatchdogControl.Models.Watchdog
     /// </summary>
     public class WatchdogDbData : NotifyPropertyChanged
     {
-        private const string ConnectionStringFormat = "Provider={0}; Data Source={1}; Password={2};User ID={3}";
+        private const string ConnectionStringFormat = "Data Source={0}; Password={1};User ID={2}";
         private static readonly string DefaultProvider = ConfigurationManager.AppSettings.Get("DefaultProvider");
         private Provider _provider;
         private DbState _state;
         private string _lastError;
 
-        public string ConnectionString => string.Format(ConnectionStringFormat, Provider.Name, DataSource, Password, User);
-        public string ConnectionStringNoPassword => string.Format(ConnectionStringFormat, Provider.Name, DataSource, "*****", User);
+        public string ConnectionString => string.Format(ConnectionStringFormat, DataSource, Password, User);
+        public string ConnectionStringNoPassword => string.Format(ConnectionStringFormat, DataSource, "*****", User);
 
         public Provider Provider
         {
