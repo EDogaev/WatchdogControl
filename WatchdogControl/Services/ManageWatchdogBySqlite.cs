@@ -137,6 +137,7 @@ namespace WatchdogControl.Services
                 using var connection = new SqliteConnection(ConnectionString);
                 connection.Open();
 
+
                 using var command = connection.CreateCommand();
                 command.CommandText = $"select * from watchdogs where watchdog_name = '{watchdog.PreviousName}'";
                 return command.ExecuteScalar() == null ? InsertWatchdog(watchdog, command) : UpdateWatchdog(watchdog, command);
@@ -145,7 +146,7 @@ namespace WatchdogControl.Services
             {
                 var err = $"Ошибка при сохранении данных в {DatabasePath}: \n{ex.Message}";
                 logger.LogError(err);
-                Messages.ShowMsgErr(err, true);
+                Messages.ShowMsgErr(err);
                 MemoryLogService.Add(err, WarningType.Error);
                 return false;
             }
