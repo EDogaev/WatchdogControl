@@ -95,7 +95,7 @@ namespace WatchdogControl.Models.Watchdog
 
         public Watchdog Clone()
         {
-            return Serializer<Watchdog>.CopyObject(this);
+            return XmlSerializer<Watchdog>.CopyObject(this);
         }
 
         public override string ToString()

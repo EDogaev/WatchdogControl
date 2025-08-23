@@ -22,7 +22,7 @@ namespace WatchdogControl.Services
             {
                 try
                 {
-                    var watchdog = Serializer<Watchdog>.LoadObject(filePath);
+                    var watchdog = XmlSerializer<Watchdog>.LoadObject(filePath);
                     watchdog.FilePath = filePath;
                     watchdog.Name = Path.GetFileNameWithoutExtension(filePath);
                     watchdog.PreviousName = watchdog.Name;
@@ -54,7 +54,7 @@ namespace WatchdogControl.Services
                 watchdog.FilePath = filePath;
                 watchdog.PreviousName = watchdog.Name;
 
-                Serializer<Watchdog>.SaveObject(watchdog, filePath);
+                XmlSerializer<Watchdog>.SaveObject(watchdog, filePath);
 
                 return true;
             }
