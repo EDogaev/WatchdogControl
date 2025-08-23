@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.OleDb;
+using Oracle.ManagedDataAccess.Client;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
@@ -18,31 +18,27 @@ namespace WatchdogControl.Services
             {
                 try
                 {
-                    using (var dbConnection = new OleDbConnection(watchdog.DbData.ConnectionString))
+                    using var dbConnection = new OracleConnection(watchdog.DbData.ConnectionString);
+                    try
                     {
-                        try
-                        {
-                            dbConnection.Open();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception($"[{watchdog.Name}] - Тест. Ошибка при подключении к базе данных: \n{ex.Message}");
-                        }
+                        dbConnection.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"[{watchdog.Name}] - Тест. Ошибка при подключении к базе данных: \n{ex.Message}");
+                    }
 
-                        try
-                        {
-                            using (var dataAdapter = new OleDbDataAdapter(watchdog.DbData.SqlStatement, dbConnection))
-                            {
-                                var dataTable = new DataTable();
-                                dataAdapter.Fill(dataTable);
-                                // попытка получить значение из результата запроса
-                                var value = dataTable.Rows[0][0];
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception($"[{watchdog.Name}] - Тест. Ошибка при запросе данных: \n{watchdog.DbData.SqlStatement}. \n{ex.Message}");
-                        }
+                    try
+                    {
+                        using var dataAdapter = new OracleDataAdapter(watchdog.DbData.SqlStatement, dbConnection);
+                        var dataTable = new DataTable();
+                        dataAdapter.Fill(dataTable);
+                        // попытка получить значение из результата запроса
+                        var value = dataTable.Rows[0][0];
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"[{watchdog.Name}] - Тест. Ошибка при запросе данных: \n{watchdog.DbData.SqlStatement}. \n{ex.Message}");
                     }
                 }
                 catch (Exception ex)
@@ -76,7 +72,7 @@ namespace WatchdogControl.Services
 
                 try
                 {
-                    using var dbConnection = new OleDbConnection(watchdog.DbData.ConnectionString);
+                    using var dbConnection = new OracleConnection(watchdog.DbData.ConnectionString);
                     try
                     {
                         watchdog.DbData.SetWatchdogDbState(DbState.Connecting);
@@ -92,13 +88,13 @@ namespace WatchdogControl.Services
 
                     try
                     {
-                        using var dataAdapter = new OleDbDataAdapter(watchdog.DbData.SqlStatement, dbConnection);
+                        using var dataAdapter = new OracleDataAdapter(watchdog.DbData.SqlStatement, dbConnection);
                         using var watchdogDataTable = new DataTable();
                         dataAdapter.Fill(watchdogDataTable);
                         var row = watchdogDataTable.Rows[0];
 
                         // текущее значение Watchdog
-                        watchdog.Values.Value = row.Field<decimal>(watchdog.DbData.WatchdogFieldName);
+                        watchdog.Values.Value = row.Field<long>(watchdog.DbData.WatchdogFieldName);
 
                         // если есть колонка с датой обновления Watchdog, то взять дату из нее
                         if (!string.IsNullOrWhiteSpace(watchdog.DbData.LastWatchdogDateFieldName))
