@@ -15,8 +15,8 @@ namespace WatchdogControl.Services
         private static readonly string ConnectionString = $"Data Source = {DatabasePath}";
 
         /// <summary> Получение списка Watchdog </summary>
-		/// <returns></returns>
-		public IEnumerable<Watchdog> Load()
+        /// <returns></returns>
+        public IEnumerable<Watchdog> Load()
         {
             try
             {
@@ -75,22 +75,24 @@ namespace WatchdogControl.Services
         private static void CreateWatchdogsTable(SqliteConnection connection)
         {
             using var command = connection.CreateCommand();
-            command.CommandText = @"CREATE TABLE ""Watchdogs"" (
-											""Watchdog_Name"" TEXT NOT NULL,
-											""Do_Request"" INTEGER NOT NULL,
-											""Provider"" TEXT,
-											""Data_Source"" TEXT NOT NULL,
-											""User"" TEXT NOT NULL,
-											""Password"" TEXT NOT NULL,
-											""Station_No"" INTEGER,
-											""Table_Name"" TEXT NOT NULL,
-											""Watchdog_Field_Name"" TEXT NOT NULL,
-											""Watchdog_Param_Name"" TEXT,
-											""Watchdog_Param_Field_Name"" TEXT,
-											""Last_Watchdog_Date_Field_Name"" TEXT,
-											""Time_After_Last_Change_Value"" INTEGER NOT NULL,
-											PRIMARY KEY(""Watchdog_Name"")
-											);";
+            command.CommandText = """
+                                  CREATE TABLE "Watchdogs" (
+                                    "Watchdog_Name" TEXT NOT NULL,
+                                    "Do_Request" INTEGER NOT NULL,
+                                    "Provider" TEXT,
+                                    "Data_Source" TEXT NOT NULL,
+                                    "User" TEXT NOT NULL,
+                                    "Password" TEXT NOT NULL,
+                                    "Station_No" INTEGER,
+                                    "Table_Name" TEXT NOT NULL,
+                                    "Watchdog_Field_Name" TEXT NOT NULL,
+                                    "Watchdog_Param_Name" TEXT,
+                                    "Watchdog_Param_Field_Name" TEXT,
+                                    "Last_Watchdog_Date_Field_Name" TEXT,
+                                    "Time_After_Last_Change_Value" INTEGER NOT NULL,
+                                    PRIMARY KEY("Watchdog_Name")
+                                    );
+                                  """;
             command.ExecuteNonQuery();
         }
 
@@ -149,51 +151,68 @@ namespace WatchdogControl.Services
             }
         }
 
-        private static bool InsertWatchdog(Watchdog watchdog, SqliteCommand command)
+        private bool InsertWatchdog(Watchdog watchdog, SqliteCommand command)
         {
-            command.CommandText = "insert into watchdogs (" +
-                                  "Watchdog_Name, Do_Request, Provider, Data_Source, User, Password, Station_No, Table_Name, Watchdog_Field_Name, " +
-                                  "Watchdog_Param_Name, Watchdog_Param_Field_Name, Last_Watchdog_Date_Field_Name, Time_After_Last_Change_Value) " +
-                                  "values(" +
-                                  $"'{watchdog.Name}', " +
-                                  (watchdog.DoRequest ? "1, " : "0, ") +
-                                  $"'{watchdog.DbData.Provider.Name}'," +
-                                  $"'{watchdog.DbData.DataSource}', " +
-                                  $"'{watchdog.DbData.User}', " +
-                                  $"'{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +
-                                  $"{watchdog.DbData.StationNo}, " +
-                                  $"'{watchdog.DbData.TableName}', " +
-                                  $"'{watchdog.DbData.WatchdogFieldName}', " +
-                                  $"'{watchdog.DbData.WatchdogParamName}', " +
-                                  $"'{watchdog.DbData.WatchdogParamFieldName}', " +
-                                  $"'{watchdog.DbData.LastWatchdogDateFieldName}', " +
-                                  $"{watchdog.Condition.TimeAfterLastChangeValue} " +
-                                  ")";
-            command.ExecuteNonQuery();
+            try
+            {
+                command.CommandText = "insert into watchdogs (" +
+                                      "Watchdog_Name, Do_Request, Provider, Data_Source, User, Password, Station_No, Table_Name, Watchdog_Field_Name, " +
+                                      "Watchdog_Param_Name, Watchdog_Param_Field_Name, Last_Watchdog_Date_Field_Name, Time_After_Last_Change_Value) " +
+                                      "values(" +
+                                      $"'{watchdog.Name}', " +
+                                      (watchdog.DoRequest ? "1, " : "0, ") +
+                                      $"'{watchdog.DbData.Provider.Name}'," +
+                                      $"'{watchdog.DbData.DataSource}', " +
+                                      $"'{watchdog.DbData.User}', " +
+                                      $"'{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +
+                                      $"{watchdog.DbData.StationNo}, " +
+                                      $"'{watchdog.DbData.TableName}', " +
+                                      $"'{watchdog.DbData.WatchdogFieldName}', " +
+                                      $"'{watchdog.DbData.WatchdogParamName}', " +
+                                      $"'{watchdog.DbData.WatchdogParamFieldName}', " +
+                                      $"'{watchdog.DbData.LastWatchdogDateFieldName}', " +
+                                      $"{watchdog.Condition.TimeAfterLastChangeValue} " +
+                                      ")";
+                command.ExecuteNonQuery();
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"""Ошибка при добавлении watchdog`а "{watchdog.Name}": {ex.Message}""");
+                throw;
+            }
         }
 
-        private static bool UpdateWatchdog(Watchdog watchdog, SqliteCommand command)
+        private bool UpdateWatchdog(Watchdog watchdog, SqliteCommand command)
         {
-            command.CommandText = "update watchdogs set " +
-                                  $"Watchdog_Name = '{watchdog.Name}', " +
-                                  "Do_Request = " + (watchdog.DoRequest ? "1" : "0") +
-                                  $", Provider = '{watchdog.DbData.Provider.Name}', " +
-                                  $"Data_Source = '{watchdog.DbData.DataSource}', " +
-                                  $"User = '{watchdog.DbData.User}', " +
-                                  $"Password = '{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +
-                                  $"Station_No = {watchdog.DbData.StationNo}, " +
-                                  $"Table_Name = '{watchdog.DbData.TableName}', " +
-                                  $"Watchdog_Field_Name = '{watchdog.DbData.WatchdogFieldName}', " +
-                                  $"Watchdog_Param_Name = '{watchdog.DbData.WatchdogParamName}', " +
-                                  $"Watchdog_Param_Field_Name = '{watchdog.DbData.WatchdogParamFieldName}', " +
-                                  $"Last_Watchdog_Date_Field_Name = '{watchdog.DbData.LastWatchdogDateFieldName}', " +
-                                  $"Time_After_Last_Change_Value = {watchdog.Condition.TimeAfterLastChangeValue} " +
-                                  $"where watchdog_name = '{watchdog.PreviousName}'";
-            command.ExecuteNonQuery();
+            try
+            {
 
-            return true;
+                command.CommandText = "update watchdogs set " +
+                                      $"Watchdog_Name = '{watchdog.Name}', " +
+                                      "Do_Request = " + (watchdog.DoRequest ? "1" : "0") +
+                                      $", Provider = '{watchdog.DbData.Provider.Name}', " +
+                                      $"Data_Source = '{watchdog.DbData.DataSource}', " +
+                                      $"User = '{watchdog.DbData.User}', " +
+                                      $"Password = '{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +
+                                      $"Station_No = {watchdog.DbData.StationNo}, " +
+                                      $"Table_Name = '{watchdog.DbData.TableName}', " +
+                                      $"Watchdog_Field_Name = '{watchdog.DbData.WatchdogFieldName}', " +
+                                      $"Watchdog_Param_Name = '{watchdog.DbData.WatchdogParamName}', " +
+                                      $"Watchdog_Param_Field_Name = '{watchdog.DbData.WatchdogParamFieldName}', " +
+                                      $"Last_Watchdog_Date_Field_Name = '{watchdog.DbData.LastWatchdogDateFieldName}', " +
+                                      $"Time_After_Last_Change_Value = {watchdog.Condition.TimeAfterLastChangeValue} " +
+                                      $"where watchdog_name = '{watchdog.PreviousName}'";
+                command.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"""Ошибка при обновлении watchdog`а "{watchdog.PreviousName}": {ex.Message}""");
+                throw;
+            }
         }
 
         /// <summary> Удаление Watchdog </summary>
@@ -207,7 +226,7 @@ namespace WatchdogControl.Services
                 connection.Open();
 
                 using var command = connection.CreateCommand();
-                command.CommandText = $"delete from watchdogs where watchdog_name = @name";
+                command.CommandText = "delete from watchdogs where watchdog_name = @name";
                 command.Parameters.AddWithValue("@name", watchdog.Name);
                 command.ExecuteNonQuery();
 
