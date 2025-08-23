@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
-using Utilities;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace WatchdogControl
 {
@@ -12,6 +13,8 @@ namespace WatchdogControl
     {
         /// <summary> Переменная, указывающая, что приложение находится в Design-time </summary>
         public static bool IsDesignMode { get; private set; } = true;
+
+        private readonly ILogger _logger = Bootstrapper.Container.GetRequiredService<ILogger<App>>();
 
         // Импорт функций WinAPI для работы с окнами
         [DllImport("user32.dll")]
@@ -43,38 +46,37 @@ namespace WatchdogControl
             // выходим из Design-time (переходим в Run-time)
             IsDesignMode = false;
 
-            Logger.LogToFile("Запуск приложения");
+            _logger.LogInformation("Запуск приложения");
 
-            var bootstrapper = new Bootstrapper();
-            bootstrapper.RunApp();
+            Bootstrapper.RunApp();
 
             base.OnStartup(e);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            Logger.LogToFile("Завершение приложения");
+            _logger.LogInformation("Завершение приложения");
             _mutex.ReleaseMutex();
             base.OnExit(e);
         }
 
         private static void ActivateExistingInstance()
         {
-            Process current = Process.GetCurrentProcess();
-            foreach (Process process in Process.GetProcessesByName(current.ProcessName))
+            var current = Process.GetCurrentProcess();
+            foreach (var process in Process.GetProcessesByName(current.ProcessName))
             {
-                if (process.Id != current.Id && process.MainWindowHandle != IntPtr.Zero)
-                {
-                    // Если окно свернуто - восстановить
-                    if (IsIconic(process.MainWindowHandle))
-                    {
-                        ShowWindow(process.MainWindowHandle, SW_RESTORE);
-                    }
+                if (process.Id == current.Id || process.MainWindowHandle == IntPtr.Zero) 
+                    continue;
 
-                    // Активировать окно
-                    SetForegroundWindow(process.MainWindowHandle);
-                    break;
+                // Если окно свернуто - восстановить
+                if (IsIconic(process.MainWindowHandle))
+                {
+                    ShowWindow(process.MainWindowHandle, SW_RESTORE);
                 }
+
+                // Активировать окно
+                SetForegroundWindow(process.MainWindowHandle);
+                break;
             }
         }
     }
