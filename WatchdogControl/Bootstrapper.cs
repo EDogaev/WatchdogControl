@@ -9,14 +9,14 @@ using WatchdogControl.Views;
 
 namespace WatchdogControl
 {
-    internal class Bootstrapper
+    internal static class Bootstrapper
     {
-        private readonly IServiceProvider _container = ConfigureServices();
+        public static readonly IServiceProvider Container = ConfigureServices();
 
-        public void RunApp()
+        public static void RunApp()
         {
             // создать главное окно
-            var mainWindow = _container.GetRequiredService<MainWindow>();
+            var mainWindow = Container.GetRequiredService<MainWindow>();
             // и запустить
             mainWindow.Show();
         }
