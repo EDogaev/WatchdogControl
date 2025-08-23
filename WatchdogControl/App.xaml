@@ -1,0 +1,77 @@
+﻿<Application x:Class="WatchdogControl.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WatchdogControl">
+    <Application.Resources>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="TextBlockVerticalAlignCenterStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="TextBlockHorizontalAlignCenterStyle" TargetType="{x:Type TextBlock}" 
+               BasedOn="{StaticResource TextBlockVerticalAlignCenterStyle}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        
+        <Style x:Key="CheckBoxVerticalAlignCenterStyle" TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}">
+        </Style>
+
+        <Style x:Key="TextBlockTextWrappingStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!--#region DataGrid-->
+        <Style TargetType="{x:Type DataGrid}">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="Gainsboro"/>
+            <Setter Property="VerticalGridLinesBrush" Value="Gainsboro"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="ColumnHeaderStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="FontWeight" Value="Medium"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type DataGridCell}">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" Opacity="0.3">
+                                <GradientStop Color="#FF5CABF3"/>
+                                <GradientStop Color="#FF60E6EF" Offset="0.5"/>
+                                <GradientStop Color="#FF5CABF3" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                    <Setter Property="BorderBrush" Value="#FF60E6EF"/>
+                    <Setter Property="BorderThickness" Value="0,1,0,1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--#endregion-->
+
+    </Application.Resources>
+</Application>
