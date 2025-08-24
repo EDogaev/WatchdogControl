@@ -40,7 +40,7 @@ namespace WatchdogControl.ViewModels
             Filter.Changed += RefreshView;
             LogStore = logStore;
 
-            MemoryLogService.SetMemoryLog(LogStore);
+            //MemoryLogService.SetMemoryLog(LogStore);
 
 
             _incidentTracker = incidentTracker;

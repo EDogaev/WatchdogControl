@@ -4,8 +4,8 @@ using System.Xml.Serialization;
 using Utilities;
 using WatchdogControl.Converters;
 using WatchdogControl.Enums;
+using WatchdogControl.Interfaces;
 using WatchdogControl.RealizedInterfaces;
-using WatchdogControl.Services;
 
 namespace WatchdogControl.Models.Watchdog
 {
@@ -29,7 +29,8 @@ namespace WatchdogControl.Models.Watchdog
     {
         private WatchdogState _state;
         private bool _doRequest = true;
-        private readonly ILogger _logger;
+        private ILogger _logger;
+        private IMemoryLogStore _memoryLogStore;
 
         public static event Action AfterChangeWatchdogState;
 
@@ -88,14 +89,18 @@ namespace WatchdogControl.Models.Watchdog
 
         public Watchdog() { }
 
-        public Watchdog(ILogger<Watchdog> logger)
+        public Watchdog(ILogger<Watchdog> logger, IMemoryLogStore memoryLogStore)
         {
             _logger = logger;
+            _memoryLogStore = memoryLogStore;
         }
 
         public Watchdog Clone()
         {
-            return XmlSerializer<Watchdog>.CopyObject(this);
+            var clone = XmlSerializer<Watchdog>.CopyObject(this);
+            clone._logger = _logger;
+            clone._memoryLogStore = _memoryLogStore;
+            return clone;
         }
 
         public override string ToString()
@@ -150,7 +155,7 @@ namespace WatchdogControl.Models.Watchdog
             if (prevState != WatchdogState.Initialization)
                 _logger.LogInformation(mess);
 
-            MemoryLogService.Add(mess, warningType);
+            _memoryLogStore.Add(mess, warningType);
         }
     }
 }

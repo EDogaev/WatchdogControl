@@ -1,15 +1,15 @@
 ﻿using System.Windows;
 using Utilities;
-using WatchdogControl.Enums;
+using WatchdogControl.Interfaces;
 using WatchdogControl.Models.Watchdog;
 using WatchdogControl.RealizedInterfaces;
-using WatchdogControl.Services;
 
 namespace WatchdogControl.ViewModels
 {
     public class EditWatchdogViewModel : NotifyPropertyChanged
     {
         private bool _testingInProgress;
+        private readonly IWatchdogManager _watchdogManager;
 
         /// <summary>Идет проверка соединения с БД</summary>
         public bool TestingInProgress
@@ -31,15 +31,16 @@ namespace WatchdogControl.ViewModels
 
         public EditWatchdogViewModel() { }
 
-        public EditWatchdogViewModel(Watchdog watchdog)
+        public EditWatchdogViewModel(Watchdog watchdog, IWatchdogManager watchdogManager)
         {
             Watchdog = watchdog;
+            _watchdogManager = watchdogManager;
 
             // проверка введенных данных
             TestWatchdogCommand = new RelayCommandAsync<string>(async (_) =>
             {
                 TestingInProgress = true;
-                var testSuccessful = await WatchdogService.TestWatchDogDbData(Watchdog); ;
+                var testSuccessful = await _watchdogManager.TestWatchDogDbData(Watchdog); ;
                 TestingInProgress = false;
 
                 if (testSuccessful)
@@ -55,7 +56,7 @@ namespace WatchdogControl.ViewModels
             if (!Messages.ShowMsgQstn($"Сохранить данные {Watchdog.Name}?"))
                 return;
 
-            if (!WatchdogService.SaveWatchdog(Watchdog))
+            if (!_watchdogManager.Save(Watchdog))
                 return;
 
             // при удачном сохранении сделать предыдущее наименование текущим

@@ -1,7 +1,5 @@
-﻿using System.Windows;
-using WatchdogControl.Enums;
+﻿using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
-using WatchdogControl.Models.MemoryLog;
 
 namespace WatchdogControl.Services
 {
@@ -25,7 +23,7 @@ namespace WatchdogControl.Services
         /// <param name="warningType"></param>
         public static void Add(string text, WarningType warningType)
         {
-            Application.Current.Dispatcher.Invoke(() => _memoryLogStore?.Add(new MemoryLog($"{DateTime.Now:dd.MM.yyyy HH:mm:ss.fff} {text}", warningType)));
+            //Application.Current.Dispatcher.Invoke(() => _memoryLogStore?.Add(new MemoryLog($"{DateTime.Now:dd.MM.yyyy HH:mm:ss.fff} {text}", warningType)));
         }
     }
 }

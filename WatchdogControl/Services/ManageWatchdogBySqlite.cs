@@ -9,14 +9,15 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal class ManageWatchdogBySqlite(ILogger<Watchdog> logger, IWatchdogFactory watchdogFactory) : IWatchdogManager
+    internal class ManageWatchdogBySqlite(ILogger<Watchdog> logger, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore) : WatchdogManager
+
     {
         private static readonly string DatabasePath = Path.Combine(AppContext.BaseDirectory, "Watchdogs.db");
         private static readonly string ConnectionString = $"Data Source = {DatabasePath}";
 
         /// <summary> Получение списка Watchdog </summary>
         /// <returns></returns>
-        public IEnumerable<Watchdog> Load()
+        public override IEnumerable<Watchdog> Load()
         {
             try
             {
@@ -46,7 +47,7 @@ namespace WatchdogControl.Services
                         var err = $"Ошибка при создании Watchdog'a {reader.SafeGetString("Watchdog_Name")}: \n{ex.Message}";
                         logger.LogError(err);
                         Messages.ShowMsgErr(err, true);
-                        MemoryLogService.Add(err, WarningType.Error);
+                        memoryLogStore.Add(err, WarningType.Error);
                     }
                 }
 
@@ -57,7 +58,7 @@ namespace WatchdogControl.Services
                 var err = $"Ошибка при запросе данных из {DatabasePath}: \n{ex.Message}";
                 logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogService.Add(err, WarningType.Error);
+                memoryLogStore.Add(err, WarningType.Error);
             }
 
             return new List<Watchdog>();
@@ -130,7 +131,7 @@ namespace WatchdogControl.Services
         /// <summary> Сохранение данных Watchdog </summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public bool Save(Watchdog watchdog)
+        public override bool Save(Watchdog watchdog)
         {
             try
             {
@@ -147,7 +148,7 @@ namespace WatchdogControl.Services
                 var err = $"Ошибка при сохранении данных в {DatabasePath}: \n{ex.Message}";
                 logger.LogError(err);
                 Messages.ShowMsgErr(err);
-                MemoryLogService.Add(err, WarningType.Error);
+                memoryLogStore.Add(err, WarningType.Error);
                 return false;
             }
         }
@@ -219,7 +220,7 @@ namespace WatchdogControl.Services
         /// <summary> Удаление Watchdog </summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public bool Remove(Watchdog watchdog)
+        public override bool Remove(Watchdog watchdog)
         {
             try
             {
@@ -238,7 +239,7 @@ namespace WatchdogControl.Services
                 var err = $"Ошибка при удалении данных из {DatabasePath}: \n{ex.Message}";
                 logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogService.Add(err, WarningType.Error);
+                memoryLogStore.Add(err, WarningType.Error);
                 return false;
             }
         }

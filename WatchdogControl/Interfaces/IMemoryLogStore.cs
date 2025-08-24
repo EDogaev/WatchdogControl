@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using WatchdogControl.Enums;
 using WatchdogControl.Models.MemoryLog;
 
 namespace WatchdogControl.Interfaces
@@ -14,7 +15,8 @@ namespace WatchdogControl.Interfaces
         ICollectionView LogsView { get; }
 
         /// <summary> Добавление записи </summary>
-        /// <param name="log"></param>
-        void Add(MemoryLog log);
+        /// <param name="mess"></param>
+        /// <param name="warningType"></param>
+        void Add(string mess, WarningType warningType);
     }
 }

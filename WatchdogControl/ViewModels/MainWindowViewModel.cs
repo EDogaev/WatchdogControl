@@ -9,7 +9,6 @@ using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.Watchdog;
 using WatchdogControl.RealizedInterfaces;
-using WatchdogControl.Services;
 using WatchdogControl.Views;
 
 namespace WatchdogControl.ViewModels
@@ -27,6 +26,8 @@ namespace WatchdogControl.ViewModels
         private int _countInWork;
         private readonly ILogger _logger;
         private readonly IWatchdogFactory _watchdogFactory;
+        private readonly IMemoryLogStore _memoryLogStore;
+        private readonly IWatchdogManager _watchdogManager;
 
         /// <summary>Список Watchdog-ов</summary>
         public ObservableCollection<Watchdog> Watchdogs { get; }
@@ -156,20 +157,22 @@ namespace WatchdogControl.ViewModels
 
         public MainWindowViewModel() { }
 
-        public MainWindowViewModel(MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, ILogger<MainWindowViewModel> logger, IWatchdogFactory watchdogFactory)
+        public MainWindowViewModel(MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, ILogger<MainWindowViewModel> logger, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore)
         {
             // если находимся в режиме дизайна, то выйти
             if (App.IsDesignMode)
                 return;
 
             MemoryLogVm = memoryLogViewModel;
-            WatchdogService.WatchdogManager = watchdogManager;
+
             _logger = logger;
             _watchdogFactory = watchdogFactory;
+            _memoryLogStore = memoryLogStore;
+            _watchdogManager = watchdogManager;
 
             CreateCommands();
 
-            Watchdogs = new ObservableCollection<Watchdog>(WatchdogService.LoadWatchdogs());
+            Watchdogs = new ObservableCollection<Watchdog>(_watchdogManager.Load());
 
             // событие при изменении коллекции
             Watchdogs.CollectionChanged += (_, e) =>
@@ -178,7 +181,7 @@ namespace WatchdogControl.ViewModels
                     return;
 
                 // обновить watchdog при добавлении/редактировании
-                if (e.NewItems is null) 
+                if (e.NewItems is null)
                     return;
 
                 foreach (Watchdog watchdog in e.NewItems)
@@ -217,11 +220,11 @@ namespace WatchdogControl.ViewModels
             SelectedWatchdog.ToggleDoRequest();
 
             // сохранить состояние
-            WatchdogService.SaveWatchdog(SelectedWatchdog);
+            _watchdogManager.Save(SelectedWatchdog);
 
             // если был включен опрос Watchdog, то опросить принудительно
             if (SelectedWatchdog.DoRequest)
-                WatchdogService.GetWatchdogData(SelectedWatchdog);
+                _watchdogManager.GetWatchdogData(SelectedWatchdog);
         }
 
         private void CreateTimer()
@@ -261,7 +264,7 @@ namespace WatchdogControl.ViewModels
             Watchdogs.Add(newWatchdog);
 
             _logger.LogInformation($"[{newWatchdog.Name}] добавлен!");
-            MemoryLogService.Add($"[{newWatchdog.Name}] добавлен!", WarningType.Warning);
+            _memoryLogStore.Add($"[{newWatchdog.Name}] добавлен!", WarningType.Warning);
         }
 
         /// <summary> Редактировать выделенный Watchdog </summary>
@@ -283,7 +286,7 @@ namespace WatchdogControl.ViewModels
                 return;
 
             _logger.LogWarning($"[{editedWatchdog.Name}] изменен!");
-            MemoryLogService.Add($"[{editedWatchdog.Name}] изменен!", WarningType.Warning);
+            _memoryLogStore.Add($"[{editedWatchdog.Name}] изменен!", WarningType.Warning);
 
             var editedWatchdogIndex = Watchdogs.IndexOf(SelectedWatchdog);
 
@@ -308,20 +311,20 @@ namespace WatchdogControl.ViewModels
             if (!Messages.ShowMsgQstn($"Удалить {SelectedWatchdog}?"))
                 return;
 
-            if (!WatchdogService.RemoveWatchdog(SelectedWatchdog))
+            if (!_watchdogManager.Remove(SelectedWatchdog))
                 return;
 
             _logger.LogError($"[{SelectedWatchdog.Name}] удален!");
-            MemoryLogService.Add($"[{SelectedWatchdog.Name}] удален!", WarningType.Warning);
+            _memoryLogStore.Add($"[{SelectedWatchdog.Name}] удален!", WarningType.Warning);
             Watchdogs.Remove(SelectedWatchdog);
         }
 
         /// <summary> Окно добавления/редактирования Watchdog </summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        private static bool CreateEditWatchdogWindow(Watchdog watchdog)
+        private bool CreateEditWatchdogWindow(Watchdog watchdog)
         {
-            var editWatchdogWindow = new EditWatchdogView(watchdog)
+            var editWatchdogWindow = new EditWatchdogView(watchdog, _watchdogManager)
             {
                 Owner = Application.Current.MainWindow
             };
@@ -354,12 +357,12 @@ namespace WatchdogControl.ViewModels
 
         private void UpdateWatchdog(Watchdog? watchdog)
         {
-            if (watchdog is null) 
+            if (watchdog is null)
                 return;
 
             UpdateProgress++;
             CurrentUpdatingWatchdog = watchdog;
-            WatchdogService.GetWatchdogData(watchdog);
+            _watchdogManager.GetWatchdogData(watchdog);
             CurrentUpdatingWatchdog = null;
         }
     }

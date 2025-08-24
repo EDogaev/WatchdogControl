@@ -1,5 +1,5 @@
-﻿using System.Data;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
+using System.Data;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
@@ -7,12 +7,10 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal static class WatchdogService
+    internal abstract class WatchdogManager : IWatchdogManager
     {
-        public static IWatchdogManager? WatchdogManager { get; set; }
-
         /// <summary>Проверка введенных данных таблицы</summary>
-        public static async Task<bool> TestWatchDogDbData(Watchdog watchdog)
+        public async Task<bool> TestWatchDogDbData(Watchdog watchdog)
         {
             return await Task.Run(() =>
             {
@@ -55,7 +53,7 @@ namespace WatchdogControl.Services
 
         /// <summary>Обновить данные Watchdog</summary>
         /// <returns></returns>
-        public static async void GetWatchdogData(Watchdog watchdog)
+        public async void GetWatchdogData(Watchdog watchdog)
         {
             // если не опрашивать Watchdog
             if (!watchdog.DoRequest)
@@ -147,25 +145,17 @@ namespace WatchdogControl.Services
         }
 
         /// <summary>Загрузить данные</summary>
-        public static IEnumerable<Watchdog> LoadWatchdogs()
-        {
-            return WatchdogManager?.Load() ?? new List<Watchdog>();
-        }
+        public abstract IEnumerable<Watchdog> Load();
+
 
         /// <summary>Сохранить данные</summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public static bool SaveWatchdog(Watchdog watchdog)
-        {
-            return WatchdogManager?.Save(watchdog) ?? false;
-        }
+        public abstract bool Save(Watchdog watchdog);
 
         /// <summary>Удалить данные</summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public static bool RemoveWatchdog(Watchdog watchdog)
-        {
-            return WatchdogManager?.Remove(watchdog) ?? false;
-        }
+        public abstract bool Remove(Watchdog watchdog);
     }
 }
