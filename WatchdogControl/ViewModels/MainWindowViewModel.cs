@@ -26,9 +26,8 @@ namespace WatchdogControl.ViewModels
         private bool _correctPasswordInputed;
         private int _countInWork;
 
-        private readonly ILogger _logger;
+        private readonly ILoggingService<MainWindowViewModel> _logService;
         private readonly IWatchdogFactory _watchdogFactory;
-        private readonly IMemoryLogStore _memoryLogStore;
         private readonly IWatchdogManager _watchdogManager;
 
         /// <summary>Список Watchdog-ов</summary>
@@ -159,7 +158,7 @@ namespace WatchdogControl.ViewModels
 
         public MainWindowViewModel() { }
 
-        public MainWindowViewModel(MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, ILogger<MainWindowViewModel> logger, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore)
+        public MainWindowViewModel(MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, ILoggingService<MainWindowViewModel> logService, IWatchdogFactory watchdogFactory)
         {
             // если находимся в режиме дизайна, то выйти
             if (App.IsDesignMode)
@@ -167,9 +166,8 @@ namespace WatchdogControl.ViewModels
 
             MemoryLogVm = memoryLogViewModel;
 
-            _logger = logger;
+            _logService = logService;
             _watchdogFactory = watchdogFactory;
-            _memoryLogStore = memoryLogStore;
             _watchdogManager = watchdogManager;
 
             CreateCommands();
@@ -265,8 +263,8 @@ namespace WatchdogControl.ViewModels
 
             Watchdogs.Add(newWatchdog);
 
-            _logger.LogInformation($"[{newWatchdog.Name}] добавлен!");
-            _memoryLogStore.Add($"[{newWatchdog.Name}] добавлен!", WarningType.Warning);
+            _logService.Logger.LogInformation($"[{newWatchdog.Name}] добавлен!");
+            _logService.MemoryLogStore.Add($"[{newWatchdog.Name}] добавлен!", WarningType.Warning);
         }
 
         /// <summary> Редактировать выделенный Watchdog </summary>
@@ -287,8 +285,8 @@ namespace WatchdogControl.ViewModels
             if (!CreateEditWatchdogWindow(editedWatchdog))
                 return;
 
-            _logger.LogWarning($"[{editedWatchdog.Name}] изменен!");
-            _memoryLogStore.Add($"[{editedWatchdog.Name}] изменен!", WarningType.Warning);
+            _logService.Logger.LogWarning($"[{editedWatchdog.Name}] изменен!");
+            _logService.MemoryLogStore.Add($"[{editedWatchdog.Name}] изменен!", WarningType.Warning);
 
             var editedWatchdogIndex = Watchdogs.IndexOf(SelectedWatchdog);
 
@@ -316,8 +314,8 @@ namespace WatchdogControl.ViewModels
             if (!_watchdogManager.Remove(SelectedWatchdog))
                 return;
 
-            _logger.LogError($"[{SelectedWatchdog.Name}] удален!");
-            _memoryLogStore.Add($"[{SelectedWatchdog.Name}] удален!", WarningType.Warning);
+            _logService.Logger.LogError($"[{SelectedWatchdog.Name}] удален!");
+            _logService.MemoryLogStore.Add($"[{SelectedWatchdog.Name}] удален!", WarningType.Warning);
             Watchdogs.Remove(SelectedWatchdog);
         }
 

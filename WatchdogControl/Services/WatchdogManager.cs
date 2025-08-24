@@ -8,10 +8,9 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal abstract class WatchdogManager(ILogger<Watchdog> logger, IMemoryLogStore memoryLogStore) : IWatchdogManager
+    internal abstract class WatchdogManager(ILoggingService<Watchdog> loggingService) : IWatchdogManager
     {
-        protected readonly ILogger<Watchdog> Logger = logger;
-        protected readonly IMemoryLogStore MemoryLogStore = memoryLogStore;
+        protected readonly ILoggingService<Watchdog> LoggingService = loggingService;
 
         /// <summary>Проверка введенных данных таблицы</summary>
         public async Task<bool> TestWatchDogDbData(Watchdog watchdog)
@@ -46,7 +45,7 @@ namespace WatchdogControl.Services
                 catch (Exception ex)
                 {
                     Messages.ShowMsgErr(ex.Message, true);
-                    MemoryLogStore.Add(ex.Message, WarningType.Error);
+                    LoggingService.MemoryLogStore.Add(ex.Message, WarningType.Error);
 
                     return false;
                 }
@@ -121,8 +120,8 @@ namespace WatchdogControl.Services
                     {
                         var err = $"{watchdog.DbData.LastError}";
 
-                        Logger.LogError(err);
-                        MemoryLogStore.Add(err, WarningType.Error);
+                        LoggingService.Logger.LogError(err);
+                        LoggingService.MemoryLogStore.Add(err, WarningType.Error);
                     }
                 }
 

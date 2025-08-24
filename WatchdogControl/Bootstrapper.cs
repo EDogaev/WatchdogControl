@@ -35,6 +35,7 @@ namespace WatchdogControl
                 // работать с данными из папки Watchdogs (XML-файлы)
                 //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
                 .AddSingleton<IWatchdogFactory, WatchdogFactory>()
+                .AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>))
                 .AddSingleton<MemoryLogViewModel>()
                 .AddSingleton<MainWindowViewModel>()
                 .AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>

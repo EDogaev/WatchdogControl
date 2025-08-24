@@ -9,7 +9,7 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal class ManageWatchdogBySqlite(ILogger<Watchdog> logger, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore) : WatchdogManager(logger, memoryLogStore)
+    internal class ManageWatchdogBySqlite(ILoggingService<Watchdog> loggingService, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore) : WatchdogManager(loggingService)
 
     {
         private static readonly string DatabasePath = Path.Combine(AppContext.BaseDirectory, "Watchdogs.db");
@@ -45,9 +45,9 @@ namespace WatchdogControl.Services
                     catch (Exception ex)
                     {
                         var err = $"Ошибка при создании Watchdog'a {reader.SafeGetString("Watchdog_Name")}: \n{ex.Message}";
-                        Logger.LogError(err);
+                        LoggingService.Logger.LogError(err);
                         Messages.ShowMsgErr(err, true);
-                        MemoryLogStore.Add(err, WarningType.Error);
+                        LoggingService.MemoryLogStore.Add(err, WarningType.Error);
                     }
                 }
 
@@ -56,9 +56,9 @@ namespace WatchdogControl.Services
             catch (Exception ex)
             {
                 var err = $"Ошибка при запросе данных из {DatabasePath}: \n{ex.Message}";
-                Logger.LogError(err);
+                LoggingService.Logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogStore.Add(err, WarningType.Error);
+                LoggingService.MemoryLogStore.Add(err, WarningType.Error);
             }
 
             return new List<Watchdog>();
@@ -146,9 +146,9 @@ namespace WatchdogControl.Services
             catch (Exception ex)
             {
                 var err = $"Ошибка при сохранении данных в {DatabasePath}: \n{ex.Message}";
-                Logger.LogError(err);
+                LoggingService.Logger.LogError(err);
                 Messages.ShowMsgErr(err);
-                MemoryLogStore.Add(err, WarningType.Error);
+                LoggingService.MemoryLogStore.Add(err, WarningType.Error);
                 return false;
             }
         }
@@ -181,7 +181,7 @@ namespace WatchdogControl.Services
             }
             catch (Exception ex)
             {
-                Logger.LogError($"""Ошибка при добавлении watchdog`а "{watchdog.Name}": {ex.Message}""");
+                LoggingService.Logger.LogError($"""Ошибка при добавлении watchdog`а "{watchdog.Name}": {ex.Message}""");
                 throw;
             }
         }
@@ -212,7 +212,7 @@ namespace WatchdogControl.Services
             }
             catch (Exception ex)
             {
-                Logger.LogError($"""Ошибка при обновлении watchdog`а "{watchdog.PreviousName}": {ex.Message}""");
+                LoggingService.Logger.LogError($"""Ошибка при обновлении watchdog`а "{watchdog.PreviousName}": {ex.Message}""");
                 throw;
             }
         }
@@ -237,9 +237,9 @@ namespace WatchdogControl.Services
             catch (Exception ex)
             {
                 var err = $"Ошибка при удалении данных из {DatabasePath}: \n{ex.Message}";
-                Logger.LogError(err);
+                LoggingService.Logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogStore.Add(err, WarningType.Error);
+                LoggingService.MemoryLogStore.Add(err, WarningType.Error);
                 return false;
             }
         }

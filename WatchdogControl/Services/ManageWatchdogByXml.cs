@@ -7,7 +7,7 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal class ManageWatchdogByXml(ILogger<Watchdog> logger, IMemoryLogStore memoryLogStore) : WatchdogManager(logger, memoryLogStore)
+    internal class ManageWatchdogByXml(ILoggingService<Watchdog> loggingService, IMemoryLogStore memoryLogStore) : WatchdogManager(loggingService)
     {
         private const string WatchdogsFolder = "Watchdogs";
         private static string WatchdogsPath => Path.Combine(Directory.GetCurrentDirectory(), WatchdogsFolder);
@@ -35,9 +35,9 @@ namespace WatchdogControl.Services
                 catch (Exception ex)
                 {
                     var err = $"Ошибка при извлечении данных из {filePath}: \n{ex.Message}";
-                    Logger.LogError(err);
+                    LoggingService.Logger.LogError(err);
                     Messages.ShowMsgErr(err);
-                    MemoryLogStore.Add(err, WarningType.Error);
+                    LoggingService.MemoryLogStore.Add(err, WarningType.Error);
                 }
             }
 
@@ -66,9 +66,9 @@ namespace WatchdogControl.Services
             catch (Exception ex)
             {
                 var err = $"[{watchdog}] Ошибка при сохранении: \n{ex.Message}";
-                Logger.LogError(err);
+                LoggingService.Logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogStore.Add(err, WarningType.Error);
+                LoggingService.MemoryLogStore.Add(err, WarningType.Error);
 
                 return false;
             }
@@ -87,9 +87,9 @@ namespace WatchdogControl.Services
             {
                 var err = $"[{watchdog}] Ошибка при удалении: \n{ex.Message}";
 
-                Logger.LogError(err);
+                LoggingService.Logger.LogError(err);
                 Messages.ShowMsgErr(err, true);
-                MemoryLogStore.Add(err, WarningType.Error);
+                LoggingService.MemoryLogStore.Add(err, WarningType.Error);
 
                 return false;
             }

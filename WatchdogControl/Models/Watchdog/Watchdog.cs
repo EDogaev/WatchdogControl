@@ -29,8 +29,7 @@ namespace WatchdogControl.Models.Watchdog
     {
         private WatchdogState _state;
         private bool _doRequest = true;
-        private ILogger _logger;
-        private IMemoryLogStore _memoryLogStore;
+        private ILoggingService<Watchdog> _loggingService;
 
         public static event Action AfterChangeWatchdogState;
 
@@ -89,17 +88,15 @@ namespace WatchdogControl.Models.Watchdog
 
         public Watchdog() { }
 
-        public Watchdog(ILogger<Watchdog> logger, IMemoryLogStore memoryLogStore)
+        public Watchdog(ILoggingService<Watchdog> loggingService)
         {
-            _logger = logger;
-            _memoryLogStore = memoryLogStore;
+            _loggingService = loggingService;
         }
 
         public Watchdog Clone()
         {
             var clone = XmlSerializer<Watchdog>.CopyObject(this);
-            clone._logger = _logger;
-            clone._memoryLogStore = _memoryLogStore;
+            clone._loggingService = _loggingService;
             return clone;
         }
 
@@ -153,9 +150,9 @@ namespace WatchdogControl.Models.Watchdog
             var mess = $"[{Name}] Изменилось состояние: {new EnumDescriptionConverter().Convert(State, null, null, null)}";
 
             if (prevState != WatchdogState.Initialization)
-                _logger.LogInformation(mess);
+                _loggingService.Logger.LogInformation(mess);
 
-            _memoryLogStore.Add(mess, warningType);
+            _loggingService.MemoryLogStore.Add(mess, warningType);
         }
     }
 }
