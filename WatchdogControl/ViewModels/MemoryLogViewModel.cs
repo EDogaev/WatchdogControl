@@ -2,7 +2,6 @@
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.MemoryLog;
 using WatchdogControl.RealizedInterfaces;
-using WatchdogControl.Services;
 
 namespace WatchdogControl.ViewModels
 {
@@ -17,7 +16,7 @@ namespace WatchdogControl.ViewModels
         public IFilterMemoryLog Filter { get; }
 
         /// <summary> Список сообщений </summary>
-        public IMemoryLogStore LogStore { get; }
+        public IMemoryLogStore MemoryLogStore { get; }
 
         /// <summary> Кол-во не квитированных ошибок </summary>
         public int ActiveErrorsCount => _incidentTracker.ActiveErrors.Count;
@@ -34,13 +33,13 @@ namespace WatchdogControl.ViewModels
         /// <summary> Квитирование всех ошибок и предупреждений </summary>
         public RelayCommand<string> ResetAllIncidentCommand { get; }
 
-        public MemoryLogViewModel(IMemoryLogStore logStore, IFilterMemoryLog filterMemoryLog, IIncidentTracker incidentTracker)
+        public MemoryLogViewModel(IMemoryLogStore memoryLogStore, IFilterMemoryLog filterMemoryLog, IIncidentTracker incidentTracker)
         {
             Filter = filterMemoryLog;
             Filter.Changed += RefreshView;
-            LogStore = logStore;
+            MemoryLogStore = memoryLogStore;
 
-            MemoryLogService.SetMemoryLog(LogStore);
+            //MemoryLogService.SetMemoryLog(MemoryLogStore);
 
 
             _incidentTracker = incidentTracker;
@@ -84,10 +83,10 @@ namespace WatchdogControl.ViewModels
 
         private void RefreshView()
         {
-            LogStore.LogsView.Refresh();
+            MemoryLogStore.View.Refresh();
         }
 
-        private void RefreshAll(object sender, EventArgs e)
+        private void RefreshAll(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(ActiveWarningsCount));
             OnPropertyChanged(nameof(HasWarnings));

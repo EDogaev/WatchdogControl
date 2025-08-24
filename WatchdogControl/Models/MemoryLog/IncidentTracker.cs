@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using WatchdogControl.Interfaces;
 
 namespace WatchdogControl.Models.MemoryLog
@@ -7,13 +6,13 @@ namespace WatchdogControl.Models.MemoryLog
     /// <summary> Отслеживание состояния записей в логе (наблюдение за ошибками и предупреждениями) </summary>
     internal class IncidentTracker : IIncidentTracker, IDisposable
     {
-        private readonly ObservableCollection<MemoryLog> _log;
+        private readonly IMemoryLogStore _memoryLogStore;
 
         /// <summary> Список не квитированных ошибок </summary>
-        private readonly List<MemoryLog> _activeErrors = new List<MemoryLog>();
+        private readonly List<MemoryLog> _activeErrors = [];
 
         /// <summary> Список не квитированных предупреждений </summary>
-        private readonly List<MemoryLog> _activeWarnings = new List<MemoryLog>();
+        private readonly List<MemoryLog> _activeWarnings = [];
 
         public IReadOnlyList<MemoryLog> ActiveErrors => _activeErrors;
 
@@ -22,10 +21,10 @@ namespace WatchdogControl.Models.MemoryLog
         /// <summary> Событие при изменении списков не квитированных ошибок и предупреждений </summary>
         public event EventHandler Changed;
 
-        public IncidentTracker(IMemoryLogStore store)
+        public IncidentTracker(IMemoryLogStore memoryLogStore)
         {
-            _log = store.Logs;
-            _log.CollectionChanged += LogCollectionChanged;
+            _memoryLogStore = memoryLogStore;
+            _memoryLogStore.Logs.CollectionChanged += LogCollectionChanged;
         }
 
         /// <summary> Событие при изменении коллекции </summary>
@@ -82,7 +81,7 @@ namespace WatchdogControl.Models.MemoryLog
 
         public void Dispose()
         {
-            _log.CollectionChanged -= LogCollectionChanged;
+            _memoryLogStore.Logs.CollectionChanged -= LogCollectionChanged;
         }
     }
 }

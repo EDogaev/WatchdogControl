@@ -10,6 +10,7 @@ namespace WatchdogControl.Interfaces
         IEnumerable<Watchdog> Load();
         bool Save(Watchdog watchdog);
         bool Remove(Watchdog watchdog);
-
+        Task<bool> TestWatchDogDbData(Watchdog watchdog);
+        void GetWatchdogData(Watchdog watchdog);
     }
 }

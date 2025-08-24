@@ -336,7 +336,7 @@
                                 FontSize="14" Margin="10,0,0,0" />
                     </StackPanel>
 
-                    <ListView ItemsSource="{Binding LogStore.LogsView}" SelectedItem="{Binding SelectedItem}">
+                    <ListView ItemsSource="{Binding MemoryLogStore.View}" SelectedItem="{Binding SelectedItem}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="{x:Type ListViewItem}">
                                 <Style.Triggers>

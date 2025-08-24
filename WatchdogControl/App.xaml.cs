@@ -78,7 +78,7 @@ namespace WatchdogControl
             var current = Process.GetCurrentProcess();
             foreach (var process in Process.GetProcessesByName(current.ProcessName))
             {
-                if (process.Id == current.Id || process.MainWindowHandle == IntPtr.Zero) 
+                if (process.Id == current.Id || process.MainWindowHandle == IntPtr.Zero)
                     continue;
 
                 // Если окно свернуто - восстановить

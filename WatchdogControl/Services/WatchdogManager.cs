@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
 using Utilities;
 using WatchdogControl.Enums;
@@ -7,12 +8,13 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal static class WatchdogService
+    internal abstract class WatchdogManager(ILogger<Watchdog> logger, IMemoryLogStore memoryLogStore) : IWatchdogManager
     {
-        public static IWatchdogManager? WatchdogManager { get; set; }
+        protected readonly ILogger<Watchdog> Logger = logger;
+        protected readonly IMemoryLogStore MemoryLogStore = memoryLogStore;
 
         /// <summary>Проверка введенных данных таблицы</summary>
-        public static async Task<bool> TestWatchDogDbData(Watchdog watchdog)
+        public async Task<bool> TestWatchDogDbData(Watchdog watchdog)
         {
             return await Task.Run(() =>
             {
@@ -44,7 +46,7 @@ namespace WatchdogControl.Services
                 catch (Exception ex)
                 {
                     Messages.ShowMsgErr(ex.Message, true);
-                    MemoryLogService.Add(ex.Message, WarningType.Error);
+                    MemoryLogStore.Add(ex.Message, WarningType.Error);
 
                     return false;
                 }
@@ -55,7 +57,7 @@ namespace WatchdogControl.Services
 
         /// <summary>Обновить данные Watchdog</summary>
         /// <returns></returns>
-        public static async void GetWatchdogData(Watchdog watchdog)
+        public async void GetWatchdogData(Watchdog watchdog)
         {
             // если не опрашивать Watchdog
             if (!watchdog.DoRequest)
@@ -83,7 +85,7 @@ namespace WatchdogControl.Services
                     {
                         watchdog.DbData.SetWatchdogDbState(DbState.Disconnected);
 
-                        throw new Exception($"[{watchdog.Name}] Не удалось соединиться с \"{watchdog.DbData.ConnectionStringNoPassword}\": {ex.Message}");
+                        throw new Exception($"""[{watchdog.Name}] Не удалось соединиться с "{watchdog.DbData.ConnectionStringNoPassword}": {ex.Message}""");
                     }
 
                     try
@@ -119,8 +121,8 @@ namespace WatchdogControl.Services
                     {
                         var err = $"{watchdog.DbData.LastError}";
 
-                        Logger.LogToFile(err);
-                        MemoryLogService.Add(err, WarningType.Error);
+                        Logger.LogError(err);
+                        MemoryLogStore.Add(err, WarningType.Error);
                     }
                 }
 
@@ -147,25 +149,17 @@ namespace WatchdogControl.Services
         }
 
         /// <summary>Загрузить данные</summary>
-        public static IEnumerable<Watchdog> LoadWatchdogs()
-        {
-            return WatchdogManager?.Load() ?? new List<Watchdog>();
-        }
+        public abstract IEnumerable<Watchdog> Load();
+
 
         /// <summary>Сохранить данные</summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public static bool SaveWatchdog(Watchdog watchdog)
-        {
-            return WatchdogManager?.Save(watchdog) ?? false;
-        }
+        public abstract bool Save(Watchdog watchdog);
 
         /// <summary>Удалить данные</summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        public static bool RemoveWatchdog(Watchdog watchdog)
-        {
-            return WatchdogManager?.Remove(watchdog) ?? false;
-        }
+        public abstract bool Remove(Watchdog watchdog);
     }
 }
