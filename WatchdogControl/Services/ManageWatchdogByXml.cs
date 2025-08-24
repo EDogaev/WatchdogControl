@@ -17,7 +17,10 @@ namespace WatchdogControl.Services
             var watchdogs = new List<Watchdog>();
 
             if (!Directory.Exists(WatchdogsPath))
+            {
+                Directory.CreateDirectory(WatchdogsPath);
                 return watchdogs;
+            }
 
             foreach (var filePath in Directory.GetFiles(WatchdogsPath))
             {
