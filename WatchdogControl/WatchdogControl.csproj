@@ -69,7 +69,7 @@
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
 	<None Update="Watchdogs.db">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
 	<None Update="Watchdogs\AKOS31SPV">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>

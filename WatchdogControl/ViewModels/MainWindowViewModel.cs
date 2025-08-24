@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
@@ -24,6 +25,7 @@ namespace WatchdogControl.ViewModels
         private bool _isPause;
         private bool _correctPasswordInputed;
         private int _countInWork;
+
         private readonly ILogger _logger;
         private readonly IWatchdogFactory _watchdogFactory;
         private readonly IMemoryLogStore _memoryLogStore;
@@ -322,12 +324,10 @@ namespace WatchdogControl.ViewModels
         /// <summary> Окно добавления/редактирования Watchdog </summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        private bool CreateEditWatchdogWindow(Watchdog watchdog)
+        private static bool CreateEditWatchdogWindow(Watchdog watchdog)
         {
-            var editWatchdogWindow = new EditWatchdogView(watchdog, _watchdogManager)
-            {
-                Owner = Application.Current.MainWindow
-            };
+            var editWatchdogWindow = Bootstrapper.Container.GetRequiredService<Func<Watchdog, EditWatchdogView>>()(watchdog);
+            editWatchdogWindow.Owner = Application.Current.MainWindow;
 
             return editWatchdogWindow.ShowDialog() ?? false;
         }

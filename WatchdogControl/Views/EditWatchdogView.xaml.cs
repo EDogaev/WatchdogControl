@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using WatchdogControl.Interfaces;
-using WatchdogControl.Models.Watchdog;
 using WatchdogControl.ViewModels;
 
 namespace WatchdogControl.Views
@@ -12,10 +10,11 @@ namespace WatchdogControl.Views
     {
         public EditWatchdogViewModel VM;
 
-        public EditWatchdogView(Watchdog watchdog, IWatchdogManager watchdogManager)
+        public EditWatchdogView(EditWatchdogViewModel editWatchdogViewModel)
         {
             InitializeComponent();
-            VM = new EditWatchdogViewModel(watchdog, watchdogManager);
+            VM = editWatchdogViewModel;
+            //VM = new EditWatchdogViewModel(watchdog, watchdogManager);
             DataContext = VM;
         }
 

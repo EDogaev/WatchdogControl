@@ -22,7 +22,7 @@ namespace WatchdogControl
             mainWindow.Show();
         }
 
-        /// <summary> Сконфигурировать IoC-контейнер </summary>
+        /// <summary> Сконфигурировать DI-контейнер </summary>
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection()
@@ -37,6 +37,13 @@ namespace WatchdogControl
                 .AddSingleton<IWatchdogFactory, WatchdogFactory>()
                 .AddSingleton<MemoryLogViewModel>()
                 .AddSingleton<MainWindowViewModel>()
+                .AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
+                    (watchdog) =>
+                    {
+                        var manager = provider.GetRequiredService<IWatchdogManager>();
+                        var vm = new EditWatchdogViewModel(watchdog, manager);
+                        return new EditWatchdogView(vm);
+                    })
                 .AddSingleton<MainWindow>()
                 .AddTransient<Watchdog>();
 
@@ -48,11 +55,12 @@ namespace WatchdogControl
             var logPath = $@"Logs\{Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName)}_.log";
 
             return new LoggerConfiguration()
+                .MinimumLevel.Verbose()
                 .Enrich.WithProperty("MachineName", Environment.MachineName)
                 .WriteTo.File(logPath,
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{MachineName}] {Message:lj}{NewLine}{Exception}",
-                    rollingInterval: RollingInterval.Hour,
-                    retainedFileCountLimit: 3)
+                    rollingInterval: RollingInterval.Month,
+                    retainedFileCountLimit: 6)
                 .CreateLogger();
         }
     }
