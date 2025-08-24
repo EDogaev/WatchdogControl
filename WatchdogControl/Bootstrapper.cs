@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.MemoryLog;
@@ -44,8 +45,15 @@ namespace WatchdogControl
 
         private static ILogger CreateLogger()
         {
+            var logPath = $@"Logs\{Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName)}_.log";
+
             return new LoggerConfiguration()
-                .WriteTo.File("logs\\app-.log").CreateLogger();
+                .Enrich.WithProperty("MachineName", Environment.MachineName)
+                .WriteTo.File(logPath,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{MachineName}] {Message:lj}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Hour,
+                    retainedFileCountLimit: 6)
+                .CreateLogger();
         }
     }
 }
