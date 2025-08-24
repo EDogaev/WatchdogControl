@@ -1,6 +1,6 @@
-﻿using System.Data;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
+using System.Data;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;

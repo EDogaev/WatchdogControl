@@ -1,6 +1,6 @@
-﻿using System.IO;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.IO;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.MemoryLog;
 using WatchdogControl.Models.Watchdog;
@@ -52,7 +52,7 @@ namespace WatchdogControl
                 .WriteTo.File(logPath,
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{MachineName}] {Message:lj}{NewLine}{Exception}",
                     rollingInterval: RollingInterval.Hour,
-                    retainedFileCountLimit: 6)
+                    retainedFileCountLimit: 3)
                 .CreateLogger();
         }
     }
