@@ -25,37 +25,21 @@ namespace WatchdogControl
         /// <summary> Сконфигурировать DI-контейнер </summary>
         private static IServiceProvider ConfigureServices()
         {
-            var services = new ServiceCollection()
-                .AddLogging(builder => builder.AddSerilog(CreateLogger(), dispose: true))
-                .AddSingleton<IFilterMemoryLog, FilterMemoryLog>()
-                .AddSingleton<IMemoryLogStore, MemoryLogStore>()
-                .AddSingleton<IIncidentTracker, IncidentTracker>()
-                // работать с данными из БД Sqlite (Watchdogs.db)
-                .AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>()
-                // работать с данными из папки Watchdogs (XML-файлы)
-                //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
-                .AddSingleton<IWatchdogFactory, WatchdogFactory>()
-                .AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>))
-                .AddSingleton<MemoryLogViewModel>()
-                .AddSingleton<MainWindowViewModel>()
-                .AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
-                    (watchdog) =>
-                    {
-                        var manager = provider.GetRequiredService<IWatchdogManager>();
-                        var vm = new EditWatchdogViewModel(watchdog, manager);
-                        return new EditWatchdogView(vm);
-                    })
-                .AddSingleton<MainWindow>()
-                .AddTransient<Watchdog>();
+            var services = new ServiceCollection();
+
+            ConfigureLogger(services);
+            ConfigureMemoryLog(services);
+            ConfigureWatchdog(services);
+            ConfigureViewsAndViewModels(services);
 
             return services.BuildServiceProvider();
         }
 
-        private static ILogger CreateLogger()
+        private static void ConfigureLogger(IServiceCollection services)
         {
             var logPath = $@"Logs\{Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName)}_.log";
 
-            return new LoggerConfiguration()
+            var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("MachineName", Environment.MachineName)
                 .WriteTo.File(logPath,
@@ -63,6 +47,43 @@ namespace WatchdogControl
                     rollingInterval: RollingInterval.Month,
                     retainedFileCountLimit: 6)
                 .CreateLogger();
+
+            services.AddLogging(builder => builder.AddSerilog(logger, dispose: true))
+                .AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
+
+        }
+
+        private static void ConfigureMemoryLog(IServiceCollection services)
+        {
+            services.AddSingleton<IFilterMemoryLog, FilterMemoryLog>()
+                .AddSingleton<IMemoryLogStore, MemoryLogStore>()
+                .AddSingleton<IIncidentTracker, IncidentTracker>();
+        }
+
+        private static void ConfigureWatchdog(IServiceCollection services)
+        {
+            services.AddSingleton<IWatchdogFactory, WatchdogFactory>()
+                .AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
+                    watchdog =>
+                    {
+                        // фабрика для сооздания окна редактирования watchdog
+                        var manager = provider.GetRequiredService<IWatchdogManager>();
+                        var vm = new EditWatchdogViewModel(watchdog, manager);
+                        return new EditWatchdogView(vm);
+                    })
+                // работать с данными из БД Sqlite (Watchdogs.db)
+                .AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>()
+                // работать с данными из папки Watchdogs (XML-файлы)
+                //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
+                .AddTransient<Watchdog>();
+
+        }
+
+        private static void ConfigureViewsAndViewModels(IServiceCollection services)
+        {
+            services.AddSingleton<MemoryLogViewModel>()
+                .AddSingleton<MainWindowViewModel>()
+                .AddSingleton<MainWindow>();
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
