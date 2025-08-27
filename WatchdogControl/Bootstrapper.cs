@@ -48,42 +48,42 @@ namespace WatchdogControl
                     retainedFileCountLimit: 6)
                 .CreateLogger();
 
-            services.AddLogging(builder => builder.AddSerilog(logger, dispose: true))
-                .AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
+            services.AddLogging(builder => builder.AddSerilog(logger, dispose: true));
+            services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
 
         }
 
         private static void ConfigureMemoryLog(IServiceCollection services)
         {
-            services.AddSingleton<IFilterMemoryLog, FilterMemoryLog>()
-                .AddSingleton<IMemoryLogStore, MemoryLogStore>()
-                .AddSingleton<IIncidentTracker, IncidentTracker>();
+            services.AddSingleton<IFilterMemoryLog, FilterMemoryLog>();
+            services.AddSingleton<IMemoryLogStore, MemoryLogStore>();
+            services.AddSingleton<IIncidentTracker, IncidentTracker>();
         }
 
         private static void ConfigureWatchdog(IServiceCollection services)
         {
-            services.AddSingleton<IWatchdogFactory, WatchdogFactory>()
-                .AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
-                    watchdog =>
-                    {
-                        // фабрика для сооздания окна редактирования watchdog
-                        var manager = provider.GetRequiredService<IWatchdogManager>();
-                        var vm = new EditWatchdogViewModel(watchdog, manager);
-                        return new EditWatchdogView(vm);
-                    })
-                // работать с данными из БД Sqlite (Watchdogs.db)
-                .AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>()
-                // работать с данными из папки Watchdogs (XML-файлы)
-                //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
-                .AddTransient<Watchdog>();
+            services.AddSingleton<IWatchdogFactory, WatchdogFactory>();
+            services.AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
+                watchdog =>
+                {
+                    // фабрика для сооздания окна редактирования watchdog
+                    var manager = provider.GetRequiredService<IWatchdogManager>();
+                    var vm = new EditWatchdogViewModel(watchdog, manager);
+                    return new EditWatchdogView(vm);
+                });
+            // работать с данными из БД Sqlite (Watchdogs.db)
+            services.AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>();
+            // работать с данными из папки Watchdogs (XML-файлы)
+            //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
+            services.AddTransient<Watchdog>();
 
         }
 
         private static void ConfigureViewsAndViewModels(IServiceCollection services)
         {
-            services.AddSingleton<MemoryLogViewModel>()
-                .AddSingleton<MainWindowViewModel>()
-                .AddSingleton<MainWindow>();
+            services.AddSingleton<MemoryLogViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindow>();
         }
     }
 }
