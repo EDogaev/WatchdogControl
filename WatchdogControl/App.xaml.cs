@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
+using WatchdogControl.Services;
 
 namespace WatchdogControl
 {
@@ -16,32 +15,9 @@ namespace WatchdogControl
 
         private readonly ILogger _logger = Bootstrapper.Container.GetRequiredService<ILogger<App>>();
 
-        // Импорт функций WinAPI для работы с окнами
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsIconic(IntPtr hWnd);
-
-        private const int SW_RESTORE = 9;
-        private static Mutex? _mutex;
-
         protected override void OnStartup(StartupEventArgs e)
         {
-            const string mutexName = "WatchdogControlMutex";
-
-            _mutex = new Mutex(true, mutexName, out var createdNew);
-
-            if (!createdNew)
-            {
-                ActivateExistingInstance();
-                Environment.Exit(0);
-                return;
-            }
+            AppService.OnStartup();
 
             // выходим из Design-time (переходим в Run-time)
             IsDesignMode = false;
@@ -69,28 +45,8 @@ namespace WatchdogControl
         protected override void OnExit(ExitEventArgs e)
         {
             _logger.LogInformation("Завершение приложения");
-            _mutex?.ReleaseMutex();
+            AppService.OnExit();
             base.OnExit(e);
-        }
-
-        private static void ActivateExistingInstance()
-        {
-            var current = Process.GetCurrentProcess();
-            foreach (var process in Process.GetProcessesByName(current.ProcessName))
-            {
-                if (process.Id == current.Id || process.MainWindowHandle == IntPtr.Zero)
-                    continue;
-
-                // Если окно свернуто - восстановить
-                if (IsIconic(process.MainWindowHandle))
-                {
-                    ShowWindow(process.MainWindowHandle, SW_RESTORE);
-                }
-
-                // Активировать окно
-                SetForegroundWindow(process.MainWindowHandle);
-                break;
-            }
         }
     }
 }

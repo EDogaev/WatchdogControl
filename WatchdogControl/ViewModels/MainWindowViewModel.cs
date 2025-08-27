@@ -159,7 +159,7 @@ namespace WatchdogControl.ViewModels
 
         public MainWindowViewModel() { }
 
-        public MainWindowViewModel(EditWatchdogWindowFactory editWatchdogWindowFactory, MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, 
+        public MainWindowViewModel(EditWatchdogWindowFactory editWatchdogWindowFactory, MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager,
             ILoggingService<MainWindowViewModel> logService, IWatchdogFactory watchdogFactory)
         {
             // если находимся в режиме дизайна, то выйти
