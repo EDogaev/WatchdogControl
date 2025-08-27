@@ -35,6 +35,8 @@ namespace WatchdogControl
             return services.BuildServiceProvider();
         }
 
+        /// <summary> Сконфигурировать логирование </summary>
+        /// <param name="services"></param>
         private static void ConfigureLogger(IServiceCollection services)
         {
             var logPath = $@"Logs\{Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName)}_.log";
@@ -53,9 +55,7 @@ namespace WatchdogControl
 
         }
 
-        /// <summary>
-        /// Регистрация классов для работы с логом в памяти
-        /// </summary>
+        /// <summary> Регистрация классов для работы с логированием в память (синхронник) </summary>
         /// <param name="services"></param>
         private static void ConfigureMemoryLog(IServiceCollection services)
         {
@@ -64,9 +64,7 @@ namespace WatchdogControl
             services.AddSingleton<IIncidentTracker, IncidentTracker>();
         }
 
-        /// <summary>
-        /// Регистрация классов для работы с Watchdog
-        /// </summary>
+        /// <summary> Регистрация классов для работы с Watchdog </summary>
         /// <param name="services"></param>
         private static void ConfigureWatchdog(IServiceCollection services)
         {
@@ -79,20 +77,11 @@ namespace WatchdogControl
 
         }
 
-        /// <summary>
-        /// Регистрация представлений и моделей-представлений
-        /// </summary>
+        /// <summary> Регистрация представлений и моделей-представлений </summary>
         /// <param name="services"></param>
         private static void ConfigureViewsAndViewModels(IServiceCollection services)
         {
-            services.AddTransient<Func<Watchdog, EditWatchdogView>>(provider =>
-                watchdog =>
-                {
-                    // фабрика для сооздания окна редактирования watchdog
-                    var manager = provider.GetRequiredService<IWatchdogManager>();
-                    var vm = new EditWatchdogViewModel(watchdog, manager);
-                    return new EditWatchdogView(vm);
-                });
+            services.AddTransient<EditWatchdogWindowFactory>();
             services.AddSingleton<MemoryLogViewModel>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();

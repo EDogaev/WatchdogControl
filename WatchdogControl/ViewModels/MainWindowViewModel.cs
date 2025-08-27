@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -10,6 +9,7 @@ using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.Watchdog;
 using WatchdogControl.RealizedInterfaces;
+using WatchdogControl.Services;
 using WatchdogControl.Views;
 
 namespace WatchdogControl.ViewModels
@@ -29,6 +29,7 @@ namespace WatchdogControl.ViewModels
         private readonly ILoggingService<MainWindowViewModel> _logService;
         private readonly IWatchdogFactory _watchdogFactory;
         private readonly IWatchdogManager _watchdogManager;
+        private readonly EditWatchdogWindowFactory _editWatchdogWindowFactory;
 
         /// <summary>Список Watchdog-ов</summary>
         public ObservableCollection<Watchdog> Watchdogs { get; }
@@ -158,12 +159,13 @@ namespace WatchdogControl.ViewModels
 
         public MainWindowViewModel() { }
 
-        public MainWindowViewModel(MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, ILoggingService<MainWindowViewModel> logService, IWatchdogFactory watchdogFactory)
+        public MainWindowViewModel(EditWatchdogWindowFactory editWatchdogWindowFactory, MemoryLogViewModel memoryLogViewModel, IWatchdogManager watchdogManager, 
+            ILoggingService<MainWindowViewModel> logService, IWatchdogFactory watchdogFactory)
         {
             // если находимся в режиме дизайна, то выйти
             if (App.IsDesignMode)
                 return;
-
+            _editWatchdogWindowFactory = editWatchdogWindowFactory;
             MemoryLogVm = memoryLogViewModel;
             _logService = logService;
             _watchdogFactory = watchdogFactory;
@@ -323,9 +325,9 @@ namespace WatchdogControl.ViewModels
         /// <summary> Окно добавления/редактирования Watchdog </summary>
         /// <param name="watchdog"></param>
         /// <returns></returns>
-        private static bool CreateEditWatchdogWindow(Watchdog watchdog)
+        private bool CreateEditWatchdogWindow(Watchdog watchdog)
         {
-            var editWatchdogWindow = Bootstrapper.Container.GetRequiredService<Func<Watchdog, EditWatchdogView>>()(watchdog);
+            var editWatchdogWindow = _editWatchdogWindowFactory.Create(watchdog);
             editWatchdogWindow.Owner = Application.Current.MainWindow;
 
             return editWatchdogWindow.ShowDialog() ?? false;
