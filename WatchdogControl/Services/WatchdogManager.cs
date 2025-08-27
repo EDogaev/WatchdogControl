@@ -10,7 +10,7 @@ namespace WatchdogControl.Services
 {
     internal abstract class WatchdogManager(ILoggingService<Watchdog> loggingService) : IWatchdogManager
     {
-        protected readonly ILoggingService<Watchdog> LoggingService = loggingService;
+        protected ILoggingService<Watchdog> LoggingService { get; } = loggingService;
 
         /// <summary>Проверка введенных данных таблицы</summary>
         public async Task<bool> TestWatchDogDbData(Watchdog watchdog)
