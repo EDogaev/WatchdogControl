@@ -165,7 +165,6 @@ namespace WatchdogControl.ViewModels
                 return;
 
             MemoryLogVm = memoryLogViewModel;
-
             _logService = logService;
             _watchdogFactory = watchdogFactory;
             _watchdogManager = watchdogManager;
@@ -263,8 +262,9 @@ namespace WatchdogControl.ViewModels
 
             Watchdogs.Add(newWatchdog);
 
-            _logService.Logger.LogInformation($"[{newWatchdog.Name}] добавлен!");
-            _logService.MemoryLogStore.Add($"[{newWatchdog.Name}] добавлен!", WarningType.Warning);
+            var message = $"[{newWatchdog.Name}] добавлен!";
+            _logService.Logger.LogInformation(message);
+            _logService.MemoryLogStore.Add(message, WarningType.Warning);
         }
 
         /// <summary> Редактировать выделенный Watchdog </summary>
@@ -314,8 +314,9 @@ namespace WatchdogControl.ViewModels
             if (!_watchdogManager.Remove(SelectedWatchdog))
                 return;
 
-            _logService.Logger.LogError($"[{SelectedWatchdog.Name}] удален!");
-            _logService.MemoryLogStore.Add($"[{SelectedWatchdog.Name}] удален!", WarningType.Warning);
+            var message = $"[{SelectedWatchdog.Name}] удален!";
+            _logService.Logger.LogError(message);
+            _logService.MemoryLogStore.Add(message, WarningType.Warning);
             Watchdogs.Remove(SelectedWatchdog);
         }
 
