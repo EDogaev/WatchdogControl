@@ -4,18 +4,11 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal class WatchdogFactory : IWatchdogFactory
+    internal class WatchdogFactory(IServiceProvider serviceProvider) : IWatchdogFactory
     {
-        private IServiceProvider _serviceProvider;
-
-        public WatchdogFactory(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
         public Watchdog CreateWatchdog()
         {
-            return _serviceProvider.GetRequiredService<Watchdog>();
+            return serviceProvider.GetRequiredService<Watchdog>();
         }
     }
 }
