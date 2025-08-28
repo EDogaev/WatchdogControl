@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Windows;
-using Microsoft.Extensions.Configuration;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.MemoryLog;
 using WatchdogControl.Models.Watchdog;

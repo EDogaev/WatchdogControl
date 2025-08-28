@@ -106,7 +106,6 @@ namespace WatchdogControl.Services
             watchdog.DoRequest = reader.SafeGetInt32("Do_Request", 0) == 1;
             watchdog.DbData = new WatchdogDbData
             {
-                Provider = new Provider { Name = reader.SafeGetString("Provider") },
                 DataSource = reader.SafeGetString("Data_Source"),
                 User = reader.SafeGetString("User"),
                 Password = new DbPassword
@@ -163,7 +162,6 @@ namespace WatchdogControl.Services
                                       "values(" +
                                       $"'{watchdog.Name}', " +
                                       (watchdog.DoRequest ? "1, " : "0, ") +
-                                      $"'{watchdog.DbData.Provider.Name}'," +
                                       $"'{watchdog.DbData.DataSource}', " +
                                       $"'{watchdog.DbData.User}', " +
                                       $"'{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +
@@ -194,7 +192,6 @@ namespace WatchdogControl.Services
                 command.CommandText = "update watchdogs set " +
                                       $"Watchdog_Name = '{watchdog.Name}', " +
                                       "Do_Request = " + (watchdog.DoRequest ? "1" : "0") +
-                                      $", Provider = '{watchdog.DbData.Provider.Name}', " +
                                       $"Data_Source = '{watchdog.DbData.DataSource}', " +
                                       $"User = '{watchdog.DbData.User}', " +
                                       $"Password = '{Convert.ToBase64String(watchdog.DbData.Password.EncryptedPassword)}', " +

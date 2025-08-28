@@ -24,27 +24,11 @@ namespace WatchdogControl.Models.Watchdog
     {
         private const string ConnectionStringFormat = "Data Source={0}; Password={1};User ID={2}";
         private static readonly string DefaultProvider = ConfigurationManager.AppSettings.Get("DefaultProvider");
-        private Provider _provider;
         private DbState _state;
         private string _lastError;
 
         public string ConnectionString => string.Format(ConnectionStringFormat, DataSource, Password, User);
         public string ConnectionStringNoPassword => string.Format(ConnectionStringFormat, DataSource, "*****", User);
-
-        public Provider Provider
-        {
-            get
-            {
-                if (_provider == null)
-                    _provider = new Provider() { Name = DefaultProvider };
-
-                if (string.IsNullOrWhiteSpace(_provider.Name))
-                    _provider.Name = DefaultProvider;
-
-                return _provider;
-            }
-            set => _provider = value;
-        }
 
         /// <summary>Признак, что в данный момент идет попытка подключения к БД</summary>
         public bool IsConnecting => _state == DbState.Connecting;
@@ -133,11 +117,6 @@ namespace WatchdogControl.Models.Watchdog
 
             if (prevState == DbState.Connecting && State == DbState.Connected || State == DbState.Connecting)
                 return;
-
-            //var mess = $"Изменилось состояние подключения к {DataSource}: {new EnumDescriptionConverter().Convert(State, null, null, null)}";
-
-            //Logger2.LogToFile(mess);
-            //CommonService.LogToMemory(mess, null);
         }
     }
 }

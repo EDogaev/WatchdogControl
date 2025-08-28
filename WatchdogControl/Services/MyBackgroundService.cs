@@ -12,7 +12,7 @@ public class MyBackgroundService(MainWindowViewModel mainWindowViewModel, ILoggi
         while (mainWindowViewModel.Watchdogs == null)
         {
             // ждать, пока создастся mainWindowViewModel
-            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken); 
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
         }
 
         while (true)
