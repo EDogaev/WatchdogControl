@@ -8,6 +8,13 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
+    /// <summary> Где хранятся watchdog-и </summary>
+    internal enum WatchdogStorage
+    {
+        Sqlite,
+        Xml
+    }
+
     internal abstract class WatchdogManager(ILoggingService<Watchdog> loggingService) : IWatchdogManager
     {
         protected ILoggingService<Watchdog> LoggingService { get; } = loggingService;

@@ -9,6 +9,12 @@ public class MyBackgroundService(MainWindowViewModel mainWindowViewModel, ILoggi
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        while (mainWindowViewModel.Watchdogs == null)
+        {
+            // ждать, пока создастся mainWindowViewModel
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken); 
+        }
+
         while (true)
         {
             try

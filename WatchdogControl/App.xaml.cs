@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Windows;
+using Microsoft.Extensions.Configuration;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.MemoryLog;
 using WatchdogControl.Models.Watchdog;
@@ -19,23 +20,19 @@ namespace WatchdogControl
     public partial class App : Application
     {
         /// <summary> Переменная, указывающая, что приложение находится в Design-time </summary>
-        public static bool IsDesignMode { get; } = Application.Current is not App;
+        public static bool IsDesignMode { get; } = Current is not App;
 
         private IHost _host;
         private ILogger _logger;
 
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             AppService.OnStartup();
             base.OnStartup(e);
 
             CreateHost();
-            await CreateHost();
-            IsDesignMode = false;
 
             _logger = _host.Services.GetRequiredService<ILogger<App>>();
-
-            _logger.LogInformation("Запуск приложения");
 
             // перехват необработанных ошибок
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
@@ -56,15 +53,18 @@ namespace WatchdogControl
 
         protected override async void OnExit(ExitEventArgs e)
         {
-            _logger.LogInformation("Завершение приложения");
             AppService.OnExit();
             await _host.StopAsync();
             base.OnExit(e);
         }
 
-        private async Task CreateHost()
+        private void CreateHost()
         {
             _host = Host.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((_, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
                 .UseSerilog((_, config) =>
                 {
                     config
@@ -73,20 +73,20 @@ namespace WatchdogControl
                         .WriteTo.File(
                             path: $@"Logs\{System.Diagnostics.Process.GetCurrentProcess().ProcessName}_.log",
                             outputTemplate:
-                            "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{MachineName}] {Message:lj}{NewLine}{Exception}",
+                            "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{MachineName}] {Message:lj}{NewLine}{Exception}",
                             rollingInterval: RollingInterval.Month,
                             retainedFileCountLimit: 6);
                 })
-                .ConfigureServices((_, services) =>
+                .ConfigureServices((context, services) =>
                 {
-                    ConfigureServices(services);
+                    ConfigureServices(services, context.Configuration);
                 })
                 .Build();
 
-            await _host.StartAsync();
+            _host.Start();
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             // === логирование ===
             services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
@@ -98,11 +98,8 @@ namespace WatchdogControl
 
             // === Watchdog ===
             services.AddSingleton<IWatchdogFactory, WatchdogFactory>();
-            // работать с данными из БД Sqlite (Watchdogs.db)
-            services.AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>();
-            // работать с данными из папки Watchdogs (XML-файлы)
-            //.AddSingleton<IWatchdogManager, ManageWatchdogByXml>()
             services.AddTransient<Watchdog>();
+            SetWatchdogManager(services, configuration);
 
             // === View-model и View
             services.AddTransient<EditWatchdogWindowFactory>();
@@ -112,6 +109,25 @@ namespace WatchdogControl
 
             // === фоновые задачи ===
             services.AddHostedService<MyBackgroundService>();
+        }
+
+        private static void SetWatchdogManager(IServiceCollection services, IConfiguration configuration)
+        {
+            Enum.TryParse(configuration.GetValue<string>("WatchdogStorage:Storage"), ignoreCase: true, out WatchdogStorage storage);
+            switch (storage)
+            {
+                case WatchdogStorage.Sqlite:
+                    // работать с данными из БД Sqlite (Watchdogs.db)
+                    services.AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>();
+                    break;
+                case WatchdogStorage.Xml:
+                    // работать с данными из папки Watchdogs (XML-файлы)
+                    services.AddSingleton<IWatchdogManager, ManageWatchdogByXml>();
+                    break;
+                default:
+                    services.AddSingleton<IWatchdogManager, ManageWatchdogBySqlite>();
+                    break;
+            }
         }
     }
 }
