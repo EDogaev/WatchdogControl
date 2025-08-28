@@ -17,22 +17,22 @@ namespace WatchdogControl.Services
 
         /// <summary> Получение списка Watchdog </summary>
         /// <returns></returns>
-        public override async Task<List<Watchdog>> Load()
+        public override List<Watchdog> Load()
         {
             try
             {
                 var result = new List<Watchdog>();
 
-                await using var connection = new SqliteConnection(ConnectionString);
-                await connection.OpenAsync();
+                using var connection = new SqliteConnection(ConnectionString);
+                connection.Open();
 
-                if (!(await TableExist(connection, "Watchdogs")))
+                if (!(TableExist(connection, "Watchdogs")))
                     CreateWatchdogsTable(connection);
 
-                await using var command = connection.CreateCommand();
+                using var command = connection.CreateCommand();
                 command.CommandText = "select * from Watchdogs";
 
-                await using var reader = await command.ExecuteReaderAsync();
+                using var reader = command.ExecuteReader();
                 if (!reader.HasRows)
                     return result;
 
@@ -64,12 +64,12 @@ namespace WatchdogControl.Services
             return [];
         }
 
-        private static async Task<bool> TableExist(SqliteConnection connection, string tableName)
+        private static bool TableExist(SqliteConnection connection, string tableName)
         {
-            await using var command = connection.CreateCommand();
+            using var command = connection.CreateCommand();
             command.CommandText = "select count(*) from sqlite_master where type='table' and name = @table_name";
             command.Parameters.AddWithValue("@table_name", tableName);
-            var count = (long)(await command.ExecuteScalarAsync() ?? 0);
+            var count = (long)(command.ExecuteScalar() ?? 0);
             return count > 0;
         }
 

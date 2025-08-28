@@ -12,47 +12,44 @@ namespace WatchdogControl.Services
         private const string WatchdogsFolder = "Watchdogs";
         private static string WatchdogsPath => Path.Combine(Directory.GetCurrentDirectory(), WatchdogsFolder);
 
-        public override async Task<List<Watchdog>> Load()
+        public override List<Watchdog> Load()
         {
-            return await Task.Run(() =>
+            try
             {
-                try
+                var watchdogs = new List<Watchdog>();
+
+                if (!Directory.Exists(WatchdogsPath))
                 {
-                    var watchdogs = new List<Watchdog>();
-
-                    if (!Directory.Exists(WatchdogsPath))
-                    {
-                        Directory.CreateDirectory(WatchdogsPath);
-                        return watchdogs;
-                    }
-
-                    foreach (var filePath in Directory.GetFiles(WatchdogsPath))
-                    {
-                        try
-                        {
-                            var watchdog = XmlSerializer<Watchdog>.LoadObject(filePath);
-                            watchdog.FilePath = filePath;
-                            watchdog.Name = Path.GetFileNameWithoutExtension(filePath);
-                            watchdog.PreviousName = watchdog.Name;
-                            watchdogs.Add(watchdog);
-                        }
-                        catch (Exception ex)
-                        {
-                            var err = $"Ошибка при извлечении данных из {filePath}: \n{ex.Message}";
-                            LoggingService.Logger.LogError(err);
-                            Messages.ShowMsgErr(err);
-                            LoggingService.MemoryLogStore.Add(err, WarningType.Error);
-                        }
-                    }
-
+                    Directory.CreateDirectory(WatchdogsPath);
                     return watchdogs;
                 }
-                catch (Exception ex)
+
+                foreach (var filePath in Directory.GetFiles(WatchdogsPath))
                 {
-                    loggingService.Logger.LogError($"Ошибка во время загрузки списка Watchdog: {ex.Message}");
-                    throw;
+                    try
+                    {
+                        var watchdog = XmlSerializer<Watchdog>.LoadObject(filePath);
+                        watchdog.FilePath = filePath;
+                        watchdog.Name = Path.GetFileNameWithoutExtension(filePath);
+                        watchdog.PreviousName = watchdog.Name;
+                        watchdogs.Add(watchdog);
+                    }
+                    catch (Exception ex)
+                    {
+                        var err = $"Ошибка при извлечении данных из {filePath}: \n{ex.Message}";
+                        LoggingService.Logger.LogError(err);
+                        Messages.ShowMsgErr(err);
+                        LoggingService.MemoryLogStore.Add(err, WarningType.Error);
+                    }
                 }
-            });
+
+                return watchdogs;
+            }
+            catch (Exception ex)
+            {
+                loggingService.Logger.LogError($"Ошибка во время загрузки списка Watchdog: {ex.Message}");
+                throw;
+            }
         }
 
         public override bool Save(Watchdog watchdog)

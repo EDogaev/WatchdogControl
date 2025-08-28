@@ -174,9 +174,9 @@ namespace WatchdogControl.ViewModels
             LoadAndConfigureWatchdogs();
         }
 
-        private async Task LoadAndConfigureWatchdogs()
+        private void LoadAndConfigureWatchdogs()
         {
-            Watchdogs = new ObservableCollection<Watchdog>(await _watchdogManager.Load());
+            Watchdogs = new ObservableCollection<Watchdog>(_watchdogManager.Load());
 
             // событие при изменении коллекции
             Watchdogs.CollectionChanged += (_, e) =>

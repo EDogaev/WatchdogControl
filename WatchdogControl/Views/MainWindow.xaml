@@ -116,9 +116,9 @@
             <StatusBar.Items>
                 <TextBlock Text="{Binding CurrentDateTime, StringFormat=dd.MM.yyyy HH:mm:ss}" Margin="0,0,10,0" />
 
-                <TextBlock Text="{Binding Watchdogs.Count}" ToolTip="Всего объектов" />
-                <TextBlock Text="/" />
                 <TextBlock Text="{Binding CountInWork}" ToolTip="Кол-во работающих объектов" />
+                <TextBlock Text="/" />
+                <TextBlock Text="{Binding Watchdogs.Count}" ToolTip="Всего объектов" />
 
                 <TextBlock Text="Время до обновления:" Margin="10,0,0,0" />
                 <TextBlock Text="{Binding TimeUntilUpdate}" Margin="0,0,10,0" Width="20" />
