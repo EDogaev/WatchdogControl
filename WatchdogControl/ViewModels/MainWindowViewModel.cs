@@ -118,7 +118,7 @@ namespace WatchdogControl.ViewModels
             }
         }
 
-        public ICollectionView WatchdogCollectionView { get; }
+        public ICollectionView WatchdogCollectionView { get; private set; }
 
         /// <summary>Добавить данные Watchdog</summary>
         public RelayCommand<Watchdog> AddWatchdogCommand { get; private set; }
@@ -170,7 +170,12 @@ namespace WatchdogControl.ViewModels
 
             CreateCommands();
 
-            LoadWatchdogs();
+            LoadAndConfigureWatchdogs();
+        }
+
+        private async Task LoadAndConfigureWatchdogs()
+        {
+            Watchdogs = new ObservableCollection<Watchdog>(await _watchdogManager.Load());
 
             // событие при изменении коллекции
             Watchdogs.CollectionChanged += (_, e) =>
@@ -190,11 +195,6 @@ namespace WatchdogControl.ViewModels
             WatchdogCollectionView.SortDescriptions.Add(new SortDescription(nameof(Watchdog.Name), ListSortDirection.Ascending));
 
             Watchdog.AfterChangeWatchdogState += () => { CountInWork = Watchdogs.Count(w => w.State == WatchdogState.Work); };
-        }
-
-        private async Task LoadWatchdogs()
-        {
-            Watchdogs = new ObservableCollection<Watchdog>(await _watchdogManager.Load());
         }
 
         private void CreateCommands()

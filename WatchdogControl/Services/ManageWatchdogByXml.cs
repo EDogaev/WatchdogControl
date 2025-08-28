@@ -7,7 +7,7 @@ using WatchdogControl.Models.Watchdog;
 
 namespace WatchdogControl.Services
 {
-    internal class ManageWatchdogByXml(ILoggingService<Watchdog> loggingService, IMemoryLogStore memoryLogStore) : WatchdogManager(loggingService)
+    internal class ManageWatchdogByXml(ILoggingService<Watchdog> loggingService, IWatchdogFactory watchdogFactory, IMemoryLogStore memoryLogStore) : WatchdogManager(loggingService)
     {
         private const string WatchdogsFolder = "Watchdogs";
         private static string WatchdogsPath => Path.Combine(Directory.GetCurrentDirectory(), WatchdogsFolder);

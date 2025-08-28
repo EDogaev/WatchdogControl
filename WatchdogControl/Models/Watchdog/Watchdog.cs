@@ -150,9 +150,9 @@ namespace WatchdogControl.Models.Watchdog
             var mess = $"[{Name}] Изменилось состояние: {new EnumDescriptionConverter().Convert(State, null, null, null)}";
 
             if (prevState != WatchdogState.Initialization)
-                _loggingService.Logger.LogInformation(mess);
+                _loggingService?.Logger.LogInformation(mess);
 
-            _loggingService.MemoryLogStore.Add(mess, warningType);
+            _loggingService?.MemoryLogStore.Add(mess, warningType);
         }
     }
 }
