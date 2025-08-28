@@ -3,20 +3,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
 using Utilities;
 using WatchdogControl.Enums;
 using WatchdogControl.Interfaces;
 using WatchdogControl.Models.Watchdog;
 using WatchdogControl.RealizedInterfaces;
 using WatchdogControl.Services;
-using WatchdogControl.Views;
 
 namespace WatchdogControl.ViewModels
 {
     public class MainWindowViewModel : NotifyPropertyChanged
     {
-        private DispatcherTimer _timer;
         private DateTime _currentDateTime;
         private Watchdog? _selectedWatchdog;
         private int _timeUntilUpdate;
@@ -114,7 +111,7 @@ namespace WatchdogControl.ViewModels
             {
                 if (!_correctPasswordInputed)
                 {
-                    _correctPasswordInputed = ShowPassword();
+                    _correctPasswordInputed = AppService.ShowPassword();
                 }
 
                 return _correctPasswordInputed;
@@ -193,8 +190,6 @@ namespace WatchdogControl.ViewModels
             WatchdogCollectionView.SortDescriptions.Add(new SortDescription(nameof(Watchdog.Name), ListSortDirection.Ascending));
 
             Watchdog.AfterChangeWatchdogState += () => { CountInWork = Watchdogs.Count(w => w.State == WatchdogState.Work); };
-
-            CreateTimer();
         }
 
         private void CreateCommands()
@@ -226,29 +221,6 @@ namespace WatchdogControl.ViewModels
             // если был включен опрос Watchdog, то опросить принудительно
             if (SelectedWatchdog.DoRequest)
                 _watchdogManager.GetWatchdogData(SelectedWatchdog);
-        }
-
-        private void CreateTimer()
-        {
-            _timer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
-            _timer.Tick += (_, _) => UpdateWatchdogsTimer();
-            _timer.Start();
-        }
-
-        /// <summary> Показать окно ввода пароля </summary>
-        /// <returns></returns>
-        private static bool ShowPassword()
-        {
-            var passwordView = new PasswordView
-            {
-                Owner = Application.Current.MainWindow
-            };
-
-            return passwordView.ShowDialog() == true;
         }
 
         /// <summary> Добавить Watchdog </summary>
@@ -333,30 +305,7 @@ namespace WatchdogControl.ViewModels
             return editWatchdogWindow.ShowDialog() ?? false;
         }
 
-        /// <summary> Таймер обновления Watchdog-ов </summary>
-        private void UpdateWatchdogsTimer()
-        {
-            CurrentDateTime = DateTime.Now;
-
-            if (!IsPause)
-                TimeUntilUpdate--;
-
-            if (TimeUntilUpdate > 0) return;
-
-            TimeUntilUpdate = 30;
-
-            // используется ToLIst() для создания копии списка Watchdogs,
-            // чтобы при изменении элемента коллекции во время выполнения этого цикла
-            // не возникало ошибки "Collection was modified; enumeration operation may not execute"
-            foreach (var watchdog in Watchdogs.ToList())
-            {
-                UpdateWatchdog(watchdog);
-            }
-
-            UpdateProgress = 0;
-        }
-
-        private void UpdateWatchdog(Watchdog? watchdog)
+        public void UpdateWatchdog(Watchdog? watchdog)
         {
             if (watchdog is null)
                 return;
