@@ -7,7 +7,7 @@ namespace WatchdogControl.Interfaces
     /// </summary>
     public interface IWatchdogManager
     {
-        IEnumerable<Watchdog> Load();
+        Task<List<Watchdog>> Load();
         bool Save(Watchdog watchdog);
         bool Remove(Watchdog watchdog);
         Task<bool> TestWatchDogDbData(Watchdog watchdog);
