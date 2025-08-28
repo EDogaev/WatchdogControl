@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows;
+using WatchdogControl.Views;
 
 namespace WatchdogControl.Services;
 
@@ -58,4 +60,18 @@ public static class AppService
             break;
         }
     }
+
+    /// <summary> Показать окно ввода пароля </summary>
+    /// <returns></returns>
+    public static bool ShowPassword()
+    {
+        var passwordView = new PasswordView
+        {
+            Owner = Application.Current.MainWindow
+        };
+
+        return passwordView.ShowDialog() == true;
+    }
+
+
 }
