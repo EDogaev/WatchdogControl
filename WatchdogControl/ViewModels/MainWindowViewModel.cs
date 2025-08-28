@@ -29,7 +29,7 @@ namespace WatchdogControl.ViewModels
         private readonly EditWatchdogWindowFactory _editWatchdogWindowFactory;
 
         /// <summary>Список Watchdog-ов</summary>
-        public ObservableCollection<Watchdog> Watchdogs { get; }
+        public ObservableCollection<Watchdog> Watchdogs { get; private set; }
 
         public MemoryLogViewModel MemoryLogVm { get; private set; }
 
@@ -170,7 +170,7 @@ namespace WatchdogControl.ViewModels
 
             CreateCommands();
 
-            Watchdogs = new ObservableCollection<Watchdog>(_watchdogManager.Load());
+            LoadWatchdogs();
 
             // событие при изменении коллекции
             Watchdogs.CollectionChanged += (_, e) =>
@@ -190,6 +190,11 @@ namespace WatchdogControl.ViewModels
             WatchdogCollectionView.SortDescriptions.Add(new SortDescription(nameof(Watchdog.Name), ListSortDirection.Ascending));
 
             Watchdog.AfterChangeWatchdogState += () => { CountInWork = Watchdogs.Count(w => w.State == WatchdogState.Work); };
+        }
+
+        private async Task LoadWatchdogs()
+        {
+            Watchdogs = new ObservableCollection<Watchdog>(await _watchdogManager.Load());
         }
 
         private void CreateCommands()

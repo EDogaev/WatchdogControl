@@ -148,7 +148,7 @@ namespace WatchdogControl.Services
         }
 
         /// <summary>Загрузить данные</summary>
-        public abstract IEnumerable<Watchdog> Load();
+        public abstract Task<List<Watchdog>> Load();
 
 
         /// <summary>Сохранить данные</summary>

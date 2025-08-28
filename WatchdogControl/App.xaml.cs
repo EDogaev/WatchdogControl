@@ -29,7 +29,9 @@ namespace WatchdogControl
             AppService.OnStartup();
             base.OnStartup(e);
 
+            CreateHost();
             await CreateHost();
+            IsDesignMode = false;
 
             _logger = _host.Services.GetRequiredService<ILogger<App>>();
 
@@ -39,12 +41,12 @@ namespace WatchdogControl
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             {
                 var ex = (Exception)e.ExceptionObject;
-                _logger.LogInformation($"Ошибка: {ex.Message}");
+                _logger.LogError($"Ошибка: {ex.Message}");
             };
 
             TaskScheduler.UnobservedTaskException += (_, e) =>
             {
-                _logger.LogInformation($"Ошибка: {e.Exception.Message}");
+                _logger.LogError($"Ошибка: {e.Exception.Message}");
             };
 
             // создать главное окно и запустить

@@ -17,22 +17,22 @@ namespace WatchdogControl.Services
 
         /// <summary> Получение списка Watchdog </summary>
         /// <returns></returns>
-        public override IEnumerable<Watchdog> Load()
+        public override async Task<List<Watchdog>> Load()
         {
             try
             {
                 var result = new List<Watchdog>();
 
-                using var connection = new SqliteConnection(ConnectionString);
-                connection.Open();
+                await using var connection = new SqliteConnection(ConnectionString);
+                await connection.OpenAsync();
 
-                if (!TableExist(connection, "Watchdogs"))
+                if (!(await TableExist(connection, "Watchdogs")))
                     CreateWatchdogsTable(connection);
 
-                using var command = connection.CreateCommand();
+                await using var command = connection.CreateCommand();
                 command.CommandText = "select * from Watchdogs";
 
-                using var reader = command.ExecuteReader();
+                await using var reader = await command.ExecuteReaderAsync();
                 if (!reader.HasRows)
                     return result;
 
@@ -61,15 +61,15 @@ namespace WatchdogControl.Services
                 LoggingService.MemoryLogStore.Add(err, WarningType.Error);
             }
 
-            return new List<Watchdog>();
+            return [];
         }
 
-        private static bool TableExist(SqliteConnection connection, string tableName)
+        private static async Task<bool> TableExist(SqliteConnection connection, string tableName)
         {
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = "select count(*) from sqlite_master where type='table' and name = @table_name";
             command.Parameters.AddWithValue("@table_name", tableName);
-            var count = (long)(command.ExecuteScalar() ?? 0);
+            var count = (long)(await command.ExecuteScalarAsync() ?? 0);
             return count > 0;
         }
 
