@@ -86,7 +86,7 @@ namespace WatchdogControl
             _host.Start();
         }
 
-        private void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             // === логирование ===
             services.AddSingleton(typeof(ILoggingService<>), typeof(LoggingService<>));
