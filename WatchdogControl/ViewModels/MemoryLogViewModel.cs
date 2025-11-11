@@ -39,9 +39,6 @@ namespace WatchdogControl.ViewModels
             Filter.Changed += RefreshView;
             MemoryLogStore = memoryLogStore;
 
-            //MemoryLogService.SetMemoryLog(MemoryLogStore);
-
-
             _incidentTracker = incidentTracker;
             _incidentTracker.Changed += RefreshAll;
 

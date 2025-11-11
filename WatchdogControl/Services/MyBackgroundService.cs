@@ -7,7 +7,7 @@ namespace WatchdogControl.Services;
 
 public class MyBackgroundService(MainWindowViewModel mainWindowViewModel, ILoggingService<MyBackgroundService> logger) : BackgroundService
 {
-    // тестовый вариант работы фонового сервиса. используются данные view-model, но так делать нельзя
+    // тестовый вариант работы фонового сервиса. используются данные view-model, но так делать нежелательно
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (mainWindowViewModel.Watchdogs == null)
