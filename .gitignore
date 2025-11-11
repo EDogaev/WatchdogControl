@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 /WatchdogControl/Watchdogs.db
 /WatchdogControl/Watchdogs/
+WatchdogControl/.vscode/*
+/WatchdogControl/tnsnames.ora
